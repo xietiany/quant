@@ -6,6 +6,10 @@ class UtilityMixin(object):
     config = config('demo.config')
     apikey = config.api
     base_url = "https://financialmodelingprep.com/api/v3"
+    v4_url = "https://financialmodelingprep.com/api/v4"
+    advancedvaluation_url = "advanced_discounted_cash_flow"
+    leveredvaluation_url = "advanced_levered_discounted_cash_flow"
+
     
     @classmethod
     def from_url(cls, url):
@@ -16,6 +20,14 @@ class UtilityMixin(object):
     @classmethod
     def combine_url(cls, ticker, period, datatype):
         return f'{UtilityMixin.base_url}/{datatype}/{ticker}?period={period}&apikey={UtilityMixin.apikey}'
+
+    @classmethod
+    def valuation_url(cls, ticker, Levered=False):
+        if Levered:
+            valuationURL = UtilityMixin.leveredvaluation_url
+        else:
+            valuationURL = UtilityMixin.advancedvaluation_url
+        return f'{UtilityMixin.v4_url}/{valuationURL}?symbol={ticker.upper()}&apikey={UtilityMixin.apikey}'
     
     @classmethod
     def loadts(cls, raw, target, key):

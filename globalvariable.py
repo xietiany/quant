@@ -107,3 +107,153 @@ mapping = {
     'netDebt': 'netDebt'
     ### balancesheet statement variable ###
 }
+
+valuationMapping = {
+    ### Advanced DCF ###
+    'year': 'year',
+    'price': "price",
+    'beta': 'beta',
+    'finalTaxRate': 'finalTaxRate',
+    'totalDebt': "totalDebt",
+    'totalEquity': "totalEquity",
+	'totalCapital': "totalCapital",
+	'dilutedShare': "dilutedSharesOutstanding",
+	'debtWeight': "debtWeighting",
+	'equityWeight': "equityWeighting",
+	'period': "period",
+	'revenue': "revenue",
+	'ebitda': "ebitda",
+	'operatingCF': "operatingCashFlow",
+	'ebit': "ebit",
+	'avgWeightShare': "weightedAverageShsOutDil",
+	'netDebt': "netDebt",
+	'inventory': "inventories",
+	'receivables': "receivables",
+	'payable': "payable",
+	'inventoryDiff': "inventoriesChange",
+	'receivableDiff': "receivablesChange",
+	'payableDiff': "payableChange",
+	'capExp': "capitalExpenditure",
+	'priorRevenue': "previousRevenue",
+	'revenuePercent': "revenuePercentage",
+	'taxRate': "taxRate",
+	'ebitdaPercent': "ebitdaPercentage",
+	'receivablePercent': "receivablesPercentage",
+	'inventoryPercent': "inventoriesPercentage",
+	'payablePercent': "payablePercentage",
+	'ebitPercent': "ebitPercentage",
+	'capExpPercent': "capitalExpenditurePercentage",
+	'operatingCFPercent': "operatingCashFlowPercentage",
+	'postTaxCostDebt': "afterTaxCostOfDebt",
+	'marketRiskPremium': "marketRiskPremium",
+	'growthRateLT': "longTermGrowthRate",
+	'costOfEquity': "costOfEquity",
+	'WACC': "wacc",
+	'cashTaxRate': "taxRateCash",
+	'ebiat': "ebiat",
+	'ufcf': "ufcf",
+	'riskFreeRate': "riskFreeRate",
+	'sumPvUfcf': "sumPvUfcf",
+	'terminalValue': "terminalValue",
+	'presentTerminalValue': "presentTerminalValue",
+	'EV': "enterpriseValue",
+	'equityValue': "equityValue",
+	'equityValuePerShare': "equityValuePerShare",
+	'freeCashFlowT1': "freeCashFlowT1",
+	'costOfDebt': "costofDebt",
+	'dep': "depreciation",
+	'totalCash': "totalCash",
+	'depPercent': "depreciationPercentage",
+	'totalCashPercent': "totalCashPercentage"
+    ### Advanced DCF ###
+    ### Levered DCF ###
+    ### Levered DCF ###
+}
+
+ratioMapping = {
+    ### Key Metric Quarterly ###
+    "symbol": "symbol",
+    "date": "date",
+    'year': "calendarYear",
+    'period': "period",
+    'revShare': "revenuePerShare",
+    'NIShare': "netIncomePerShare",
+    'OperaCFShare': "operatingCashFlowPerShare",
+    'FCFShare': "freeCashFlowPerShare",
+    'cashShare': "cashPerShare",
+    'BVShare': "bookValuePerShare",
+    'tangibleBVShare': "tangibleBookValuePerShare",
+    'SHEquityShare': "shareholdersEquityPerShare",
+    'interestDebtShare': "interestDebtPerShare",
+    'MV': "marketCap",
+    'EV': "enterpriseValue",
+    'PE': "peRatio",
+    'PS': "priceToSalesRatio",
+    'PCF': "pocfratio",
+    'PFCF': "pfcfRatio",
+    'PB': "pbRatio",
+    'PTB': "ptbRatio",
+    'EVtoSales': "evToSales",
+    'EVtoEBITDA': "enterpriseValueOverEBITDA",
+    'EVtoOperaCF': "evToOperatingCashFlow",
+    'EVtoFCF': "evToFreeCashFlow",
+    'EarningYield': "earningsYield",
+    'FCFYield': "freeCashFlowYield",
+    'debtEquity': "debtToEquity",
+    'debtAsset': "debtToAssets",
+    'netDebtEBITDA': "netDebtToEBITDA",
+    'CA': "currentRatio",
+    'IntCoverage': "interestCoverage",
+    'IncQuality': "incomeQuality",
+    'dividendYield': "dividendYield",
+    'payoutRatio': "payoutRatio",
+    'AdmintoRevenue': "salesGeneralAndAdministrativeToRevenue",
+    'research&developtoRevenue': "researchAndDdevelopementToRevenue",
+    'intangibletoAsset': "intangiblesToTotalAssets",
+    'CapExtoOperaCF': "capexToOperatingCashFlow",
+    'CapExtoRevenue': "capexToRevenue",
+    'CapExtoDepre': "capexToDepreciation",
+    'stockComptoRevenue': "stockBasedCompensationToRevenue",
+    'grahamNumber': "grahamNumber",
+    'ROIC': "roic",
+    'ROTangibleAsset': "returnOnTangibleAssets",
+    'grahamNetNet': "grahamNetNet",
+    'WC': "workingCapital",
+    'tangibleAsset': "tangibleAssetValue",
+    'netCurrentAsset': "netCurrentAssetValue",
+    'investedCapital': "investedCapital",
+    'avgReceivables': "averageReceivables",
+    'avgPayables': "averagePayables",
+    'avgInv': "averageInventory",
+    'daysSalesOutstanding': "daysSalesOutstanding",
+    'daysPayablesOutstanding': "daysPayablesOutstanding",
+    'daysInv': "daysOfInventoryOnHand",
+    'receivablesTurnover': "receivablesTurnover",
+    'payablesTurnover': "payablesTurnover",
+    'InvTurnover': "inventoryTurnover",
+    'ROE': "roe",
+    'CapExShare': "capexPerShare"
+    ### Key Metric Quarterly ###
+}
+
+ratioTTMMapping = {
+    ### Key Metric TTM ###
+    
+    ### Key Metric TTM ###
+}
+
+CFGrowthMapping = {
+
+}
+
+IncGrowthMapping = {
+
+}
+
+BSGrowthMapping = {
+
+}
+
+FinancialGrowthMapping = {
+
+}
