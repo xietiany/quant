@@ -5,19 +5,18 @@ class valuation(UtilityMixin):
     global valuationMapping
     def __init__(self, ticker):
         self._url = self.valuation_url(ticker)
-        print(self._url)
         self._raw = self.from_url(self._url)
 
         self._year = self.loadkey(self._raw, valuationMapping['year'])
         self._price = self.loadts(self._raw, valuationMapping['price'], self._year)
-        self._beta = self.loadts(self._raw, valuationMapping['beta'], self._year)
+        self._beta = self.loadsingle(self._raw, valuationMapping['beta'])
         # self._finalTaxRate = self.loadts(self._raw, valuationMapping['finalTaxRate'], self._year)
         self._totalDebt = self.loadts(self._raw, valuationMapping['totalDebt'], self._year)
         self._totalEquity = self.loadts(self._raw, valuationMapping['totalEquity'], self._year)
         self._totalCapital = self.loadts(self._raw, valuationMapping['totalCapital'], self._year)
         self._dilutedShare = self.loadts(self._raw, valuationMapping['dilutedShare'], self._year)
-        self._debtWeight = self.loadts(self._raw, valuationMapping['debtWeight'], self._year)
-        self._equityWeight = self.loadts(self._raw, valuationMapping['equityWeight'], self._year)
+        self._debtWeight = self.loadsingle(self._raw, valuationMapping['debtWeight'])
+        self._equityWeight = self.loadsingle(self._raw, valuationMapping['equityWeight'])
         # self._period = self.loadts(self._raw, valuationMapping['period'], self._year)
         self._revenue = self.loadts(self._raw, valuationMapping['revenue'], self._year)
         self._ebitda = self.loadts(self._raw, valuationMapping['ebitda'], self._year)
@@ -45,15 +44,15 @@ class valuation(UtilityMixin):
         self._capExpPercent = self.loadts(self._raw, valuationMapping['capExpPercent'], self._year)
         # self._operatingCFPercent = self.loadts(self._raw, valuationMapping['operatingCFPercent'], self._year)
         self._postTaxCostDebt = self.loadts(self._raw, valuationMapping['postTaxCostDebt'], self._year)
-        self._marketRiskPremium = self.loadts(self._raw, valuationMapping['marketRiskPremium'], self._year)
-        self._growthRateLT = self.loadts(self._raw, valuationMapping['growthRateLT'], self._year)
-        self._costOfEquity = self.loadts(self._raw, valuationMapping['costOfEquity'], self._year)
+        self._marketRiskPremium = self.loadsingle(self._raw, valuationMapping['marketRiskPremium'])
+        self._growthRateLT = self.loadsingle(self._raw, valuationMapping['growthRateLT'])
+        self._costOfEquity = self.loadsingle(self._raw, valuationMapping['costOfEquity'])
         self._WACC = self.loadts(self._raw, valuationMapping['WACC'], self._year)
         
         self._cashTaxRate = self.loadts(self._raw, valuationMapping['cashTaxRate'], self._year)
         self._ebiat = self.loadts(self._raw, valuationMapping['ebiat'], self._year)
         self._ufcf = self.loadts(self._raw, valuationMapping['ufcf'], self._year)
-        self._riskFreeRate = self.loadts(self._raw, valuationMapping['riskFreeRate'], self._year)
+        self._riskFreeRate = self.loadsingle(self._raw, valuationMapping['riskFreeRate'])
         self._sumPvUfcf = self.loadts(self._raw, valuationMapping['sumPvUfcf'], self._year)
         self._terminalValue = self.loadts(self._raw, valuationMapping['terminalValue'], self._year)
         self._presentTerminalValue = self.loadts(self._raw, valuationMapping['presentTerminalValue'], self._year)
@@ -61,7 +60,7 @@ class valuation(UtilityMixin):
         self._equityValue = self.loadts(self._raw, valuationMapping['equityValue'], self._year)
         self._equityValuePerShare = self.loadts(self._raw, valuationMapping['equityValuePerShare'], self._year)
         self._freeCashFlowT1 = self.loadts(self._raw, valuationMapping['freeCashFlowT1'], self._year)
-        self._costOfDebt = self.loadts(self._raw, valuationMapping['costOfDebt'], self._year)
+        self._costOfDebt = self.loadsingle(self._raw, valuationMapping['costOfDebt'])
         self._dep = self.loadts(self._raw, valuationMapping['dep'], self._year)
         self._totalCash = self.loadts(self._raw, valuationMapping['totalCash'], self._year)
         self._depPercent = self.loadts(self._raw, valuationMapping['depPercent'], self._year)
@@ -87,9 +86,9 @@ class valuation(UtilityMixin):
     def beta(self):
         return self._beta
 
-    @property
-    def taxRateTotal(self):
-        return self._finalTaxRate
+    # @property
+    # def taxRateTotal(self):
+    #     return self._finalTaxRate
 
     @property
     def totalDebt(self):
