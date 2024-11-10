@@ -25,13 +25,12 @@ class engine(object):
         ending = starting
         growthcent = cls.RateConversion(growth)
         RRcent = cls.RateConversion(RR)
-        for i in period:
+        for i in range(period):
             ending = ending * growthcent / RRcent
             cashflowlist.append(ending)
 
         return cashflowlist, ending
 
-    
     @classmethod
     def FCFE(cls, starting, LTGrowth, RR):
         divider = ((RR - LTGrowth) / 100)
