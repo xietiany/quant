@@ -3,6 +3,7 @@ from obj.balancest import balancest
 from obj.cashflowst import cashflowst
 from obj.valuation import valuation
 from obj.ratio import ratio
+from obj.dividend import dividend
 from engine.engine import engine
 
 class stock(engine):
@@ -24,6 +25,7 @@ class stock(engine):
         self._cashflowst = cashflowst(self._ticker, self._period, self._cashflowdatatype)
         self._valuation = valuation(self._ticker)
         self._ratio = ratio(self._ticker, self._period, self._ratiotype)
+        self._div = dividend(self._ticker)
 
         
         # stock characteristics setup
@@ -68,6 +70,10 @@ class stock(engine):
     @property
     def ratio(self):
         return self._ratio
+
+    @property
+    def div(self):
+        return self._div
 
     @property
     def firstStageGrowthValue(self):
@@ -242,6 +248,8 @@ class stock(engine):
             print("using free cash flow per share as forecasting cashflow ", self._starting)
         elif self._valuationMethod == "earning":
             print("using earning per share as forecasting cashflow ", self._starting)
+        elif self._valuationMethod == "div":
+            print("using dividend as forecasting cashflow", self._starting)
         return self._starting
     
     @valuationMethod.setter
@@ -254,15 +262,17 @@ class stock(engine):
             self._starting = float(self.cashflowst.freeCF.iloc[0] / self.incomest.shares.iloc[0])
         elif self._valuationMethod == "earning":
             self._starting = float(self.incomest.eps.iloc[0])
+        elif self._valuationMethod == "div":
+            self._starting = float(self.div.divAdj.iloc[0])
         if self._starting <= 0:
             raise ValueError("starting value should be greater than 0, consider other approach")
 
-    @property
-    def FCFE(self):
-        """
-        Calculate its own FCFE
-        """
-        pass
+    # @property
+    # def freecashtoEquity(self):
+    #     """
+    #     Calculate its own FCFE
+    #     """
+    #     pass
 
     @property
     def FV(self):

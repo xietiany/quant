@@ -10,6 +10,7 @@ class UtilityMixin(object):
     v4_url = "https://financialmodelingprep.com/api/v4"
     advancedvaluation_url = "advanced_discounted_cash_flow"
     leveredvaluation_url = "advanced_levered_discounted_cash_flow"
+    dividend_url = "https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend"
 
     
     @classmethod
@@ -29,6 +30,10 @@ class UtilityMixin(object):
         else:
             valuationURL = UtilityMixin.advancedvaluation_url
         return f'{UtilityMixin.v4_url}/{valuationURL}?symbol={ticker.upper()}&apikey={UtilityMixin.apikey}'
+
+    @classmethod
+    def div_url(cls, ticker):
+        return f'{UtilityMixin.dividend_url}/{ticker}?apikey={UtilityMixin.apikey}'
     
     @classmethod
     def loadts(cls, raw, target, key):

@@ -236,6 +236,16 @@ ratioMapping = {
     ### Key Metric Quarterly ###
 }
 
+dividendMapping = {
+    "date": "date",
+    "label": "label",
+    "divAdj": "adjDividend",
+    "div": "dividend",
+    "recordDate": "recordDate",
+    "paymentDate": "paymentDate",
+    "declarationDate": "declarationDate"
+}
+
 ratioTTMMapping = {
     ### Key Metric TTM ###
     
