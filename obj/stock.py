@@ -4,6 +4,7 @@ from obj.cashflowst import cashflowst
 from obj.valuation import valuation
 from obj.ratio import ratio
 from obj.dividend import dividend
+from obj.price import price
 from engine.engine import engine
 
 class stock(engine):
@@ -26,6 +27,7 @@ class stock(engine):
         self._valuation = valuation(self._ticker)
         self._ratio = ratio(self._ticker, self._period, self._ratiotype)
         self._div = dividend(self._ticker)
+        self._price = price(self._ticker)
 
         
         # stock characteristics setup
