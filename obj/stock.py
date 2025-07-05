@@ -8,24 +8,16 @@ from engine.engine import engine
 
 class stock(engine):
     
-    def __init__(self, ticker, period = "annual", report = False):
+    def __init__(self, ticker, period = "annual"):
         self._ticker = ticker
         self._period = period
         self._ratiotype = "key-metrics"
-        if report:
-            self._balancedatatype = "balance-sheet-statement-as-reported"
-            self._incomedatatype = "income-statement-as-reported"
-            self._cashflowdatatype = "cash-flow-statement-as-reported"
-        else:
-            self._balancedatatype = "balance-sheet-statement"
-            self._incomedatatype = "income-statement"
-            self._cashflowdatatype = "cash-flow-statement"
-        self._balancest = balancest(self._ticker, self._period, self._balancedatatype)
-        self._incomest = incomest(self._ticker, self._period, self._incomedatatype)
-        self._cashflowst = cashflowst(self._ticker, self._period, self._cashflowdatatype)
-        self._valuation = valuation(self._ticker)
-        self._ratio = ratio(self._ticker, self._period, self._ratiotype)
-        self._div = dividend(self._ticker)
+        self._balancest = balancest(self._ticker, self._period) # period could be annual|quarter|report
+        self._incomest = incomest(self._ticker, self._period) # period could be annual|quarter|report
+        self._cashflowst = cashflowst(self._ticker, self._period) # period could be annual|quarter|report
+        # self._valuation = valuation(self._ticker)
+        # self._ratio = ratio(self._ticker, self._period, self._ratiotype)
+        # self._div = dividend(self._ticker)
 
         
         # stock characteristics setup
@@ -38,7 +30,7 @@ class stock(engine):
 
         self._valuationStage = "single" # two, three
         self._valuationMethod = "fcfe" # either fcfe or earning
-        self._starting = float(self.cashflowst.freeCF.iloc[0] / self.incomest.shares.iloc[0]) # earning, NI
+        self._starting = float(self.incomest.eps.iloc[0]) # earning, NI
         self._growthCalcuMethod = "earning" # fcfe, NI
         self._growthCalcuHorizon = 5
 
@@ -139,24 +131,25 @@ class stock(engine):
 
     @RR.setter
     def RR(self, WACCApproach=True):
-        """
-        The default value is true, if WACC is false, then use CAPM
-                    self.valuation.equityWeight
-                    self.valuation.debtWeight
-                    self.valuation.costOfDebt
-                    self.valuation.costOfEquity
-                    self.valuation.beta
-                    self.valuation.RP
-                    self.valuation.RF
-        """
-        self._WACCApproach = WACCApproach
-        if self._WACCApproach:
-            rate = self.WACC(self.valuation.costOfEquity, self.valuation.costOfDebt, self.valuation.equityWeight, self.valuation.debtWeight)
-        else:
-            rate = self.CAPM(self.valuation.RF, self.valuation.RP, self.valuation.beta)
-        if rate <= 0:
-            raise ValueError("rate should be greater than 0")
-        self._RR = rate
+        # """
+        # The default value is true, if WACC is false, then use CAPM
+        #             self.valuation.equityWeight
+        #             self.valuation.debtWeight
+        #             self.valuation.costOfDebt
+        #             self.valuation.costOfEquity
+        #             self.valuation.beta
+        #             self.valuation.RP
+        #             self.valuation.RF
+        # """
+        # self._WACCApproach = WACCApproach
+        # if self._WACCApproach:
+        #     rate = self.WACC(self.valuation.costOfEquity, self.valuation.costOfDebt, self.valuation.equityWeight, self.valuation.debtWeight)
+        # else:
+        #     rate = self.CAPM(self.valuation.RF, self.valuation.RP, self.valuation.beta)
+        # if rate <= 0:
+        #     raise ValueError("rate should be greater than 0")
+        # self._RR = rate
+        self._RR = 10
 
     def _smooth(self):
         pass
@@ -224,12 +217,11 @@ class stock(engine):
         return self._LTGrowth
 
     @LTGrowth.setter
-    def LTGrowth(self, usingAnalysis):
-        self._longtermGrowthDefault = usingAnalysis
-        if self._longtermGrowthDefault:
-            self._LTGrowth = self.valuation.growthRateLT
-        else:
-            self._LTGrowth = self.LTGrowthEngine()
+    def LTGrowth(self, usingAnalysis=False):
+        # self._longtermGrowthDefault = usingAnalysis
+        # if self._longtermGrowthDefault:
+        #     self._LTGrowth = self.valuation.growthRateLT
+        self._LTGrowth = self.LTGrowthEngine()
         if self._LTGrowth <= 0:
             raise ValueError("long term growth should be greater than 0")
 
@@ -257,15 +249,17 @@ class stock(engine):
         '''
         Option could be "fcfe, earning, ri"
         '''
+        # self._valuationMethod = option
+        # if self._valuationMethod == "fcfe":
+        #     self._starting = float(self.cashflowst.freeCF.iloc[0] / self.incomest.shares.iloc[0])
+        # elif self._valuationMethod == "earning":
+        #     self._starting = float(self.incomest.eps.iloc[0])
+        # elif self._valuationMethod == "div":
+        #     self._starting = float(self.div.divAdj.iloc[0])
+        # if self._starting <= 0:
+        #     raise ValueError("starting value should be greater than 0, consider other approach")
         self._valuationMethod = option
-        if self._valuationMethod == "fcfe":
-            self._starting = float(self.cashflowst.freeCF.iloc[0] / self.incomest.shares.iloc[0])
-        elif self._valuationMethod == "earning":
-            self._starting = float(self.incomest.eps.iloc[0])
-        elif self._valuationMethod == "div":
-            self._starting = float(self.div.divAdj.iloc[0])
-        if self._starting <= 0:
-            raise ValueError("starting value should be greater than 0, consider other approach")
+        self._starting = float(self.incomest.eps.iloc[0])
 
     # @property
     # def freecashtoEquity(self):
@@ -308,7 +302,7 @@ class stock(engine):
 
         return self.FCFE(self._starting, self._LTGrowth, self._RR)
 
-    def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = True, \
+    def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
                         valuationStage = "single", growthCalcuMethod = "earning", growthCalcuHorizon = 5):
         self.RR = defaultRateApproach
         self.valuationMehod = valuationMethod

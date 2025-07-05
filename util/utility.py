@@ -12,7 +12,7 @@ class UtilityMixin(object):
     leveredvaluation_url = "advanced_levered_discounted_cash_flow"
     dividend_url = "https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend"
 
-    
+
     @classmethod
     def from_url(cls, url):
         response = requests.get(url)
@@ -38,8 +38,12 @@ class UtilityMixin(object):
     @classmethod
     def loadts(cls, raw, target, key):
         res = []
-        for item in raw:
-            res.append(item[target])
+        # for item in raw:
+        #     res.append(item[target])
+        # return pd.Series(res, index=key)
+
+        for _, value in raw.items():
+            res.append(value[target])
         return pd.Series(res, index=key)
     
     @classmethod
@@ -49,6 +53,9 @@ class UtilityMixin(object):
     @classmethod
     def loadkey(cls, raw, target):
         res = []
-        for item in raw:
-            res.append(item[target])
+        # for item in raw:
+        #     res.append(item[target])
+        # return res
+        for key, value in raw.items():
+            res.append(value[target])
         return res
