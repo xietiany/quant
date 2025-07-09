@@ -4,7 +4,11 @@ from obj.cashflowst import cashflowst
 from obj.valuation import valuation
 from obj.ratio import ratio
 from obj.dividend import dividend
+from obj.econ import econ
+from obj.price import price
 from engine.engine import engine
+import numpy as np
+import pandas as pd
 
 class stock(engine):
     
@@ -15,6 +19,7 @@ class stock(engine):
         self._balancest = balancest(self._ticker, self._period) # period could be annual|quarter|report
         self._incomest = incomest(self._ticker, self._period) # period could be annual|quarter|report
         self._cashflowst = cashflowst(self._ticker, self._period) # period could be annual|quarter|report
+        self._price = price(self._ticker)
         # self._valuation = valuation(self._ticker)
         # self._ratio = ratio(self._ticker, self._period, self._ratiotype)
         # self._div = dividend(self._ticker)
@@ -33,6 +38,23 @@ class stock(engine):
         self._starting = float(self.incomest.eps.iloc[0]) # earning, NI
         self._growthCalcuMethod = "earning" # fcfe, NI
         self._growthCalcuHorizon = 5
+        
+        # Econ Variables
+        self._macro = econ(taxRate = 25, rf = 1.64)
+        self._taxRate = self._macro.taxRate()
+        self._rf = self._macro.riskFreeRate()
+        self._marketReturn = self._macro.marketReturn()
+        self._marketIndex = self._macro.index()
+
+        self._betaCalc()
+        self.MVEquity()
+        self.MVDebt()
+        self.EV()
+        self.equityWeight()
+        self.debtWeight()
+        self.costEquity()
+        self.costDebt()
+
 
     
     @property
@@ -66,6 +88,22 @@ class stock(engine):
     @property
     def div(self):
         return self._div
+
+    @property
+    def taxRate(self):
+        return self._taxRate
+    
+    @property
+    def rf(self):
+        return self._rf
+
+    @property
+    def marketReturn(self):
+        return self._marketReturn
+
+    @property
+    def beta(self):
+        return self._beta
 
     @property
     def firstStageGrowthValue(self):
@@ -113,6 +151,38 @@ class stock(engine):
     def growthCalcuHorizon(self, growthCalcuHorizon = 5):
         self._growthcalculationHorizon = growthCalcuHorizon
 
+    def MVEquity(self):
+        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).to_list()[0]
+        return self._MVEquity
+    
+    def MVDebt(self):
+        self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
+        self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
+        self._balancest.capitalLease.fillna(0)).to_list()[0]
+        return self._MVDebt
+
+    def EV(self):
+        self._EV = self._MVEquity + self._MVDebt
+        return self._EV
+
+    def equityWeight(self):
+        self._equityWeight = self._MVEquity / self._EV
+        return self._equityWeight
+
+    def debtWeight(self):
+        self._debtWeight = self._MVDebt / self._EV
+        return self._debtWeight
+
+    def costEquity(self):
+        '''
+        CAPM Model
+        '''
+        self._costEquity = self._rf + self._beta * (self._marketReturn - self._rf)
+    
+    def costDebt(self):
+        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).to_list()[0]
+
+
     @property
     def RR(self):
         if not hasattr(self, "_RR"):
@@ -131,25 +201,35 @@ class stock(engine):
 
     @RR.setter
     def RR(self, WACCApproach=True):
-        # """
-        # The default value is true, if WACC is false, then use CAPM
-        #             self.valuation.equityWeight
-        #             self.valuation.debtWeight
-        #             self.valuation.costOfDebt
-        #             self.valuation.costOfEquity
-        #             self.valuation.beta
-        #             self.valuation.RP
-        #             self.valuation.RF
-        # """
-        # self._WACCApproach = WACCApproach
-        # if self._WACCApproach:
-        #     rate = self.WACC(self.valuation.costOfEquity, self.valuation.costOfDebt, self.valuation.equityWeight, self.valuation.debtWeight)
-        # else:
-        #     rate = self.CAPM(self.valuation.RF, self.valuation.RP, self.valuation.beta)
-        # if rate <= 0:
-        #     raise ValueError("rate should be greater than 0")
-        # self._RR = rate
-        self._RR = 10
+        """
+        The default value is true, if WACC is false, then use CAPM
+                    self.valuation.equityWeight
+                    self.valuation.debtWeight
+                    self.valuation.costOfDebt
+                    self.valuation.costOfEquity
+                    self.valuation.beta
+                    self.valuation.RP
+                    self.valuation.RF
+        """
+        self._WACCApproach = WACCApproach
+        if self._WACCApproach:
+            rate = self.WACC(self._costEquity, self._costDebt, self._equityWeight, self._debtWeight)
+        if rate <= 0:
+            raise ValueError("rate should be greater than 0")
+        self._RR = rate
+    
+    def _betaCalc(self, start = "2024-01-01", end = "2024-12-31"):
+        stockHist = self._price.raw
+        stock_data = stockHist[(stockHist["date"].astype(str) >= start) & (stockHist["date"].astype(str) <= end)]["close"]
+        market_data = self._marketIndex[(self._marketIndex["date"].astype(str) >= start) & (self._marketIndex["date"].astype(str) <= end)]["close"]
+
+        stock_returns = stock_data.pct_change().dropna().to_list()
+        market_returns = market_data.pct_change().dropna().to_list()
+
+        covariance = np.cov(stock_returns, market_returns)[0,1]
+        market_variance = np.var(market_returns)
+
+        self._beta = covariance / market_variance
 
     def _smooth(self):
         pass

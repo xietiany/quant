@@ -35,18 +35,20 @@ class balancest(UtilityMixin):
         # self._totalAsset = self.loadts(self._raw, mapping['totalAsset'], self._date)
         # self._inv = self.loadts(self._raw, mapping['inv'], self._date)
         # self._AP = self.loadts(self._raw, mapping['APs'], self._date)
-        # self._shortTermDebt = self.loadts(self._raw, mapping['shortTermDebt'], self._date)
+        self._stDebt = self.loadts(self._raw, mapping['shortTermDebt'], self._date)
+        self._notePayable = self.loadts(self._raw, mapping['notePayable'], self._date)
         # self._taxPayable = self.loadts(self._raw, mapping['taxPayable'], self._date)
         # self._DR = self.loadts(self._raw, mapping['DR'], self._date)
         # self._otherCurLiability = self.loadts(self._raw, mapping['otherCurLiability'], self._date)
         # self._totalCurLiability = self.loadts(self._raw, mapping['totalCurLiability'], self._date)
-        # self._ltDebt = self.loadts(self._raw, mapping['longTermDebt'], self._date)
+        self._ltDebt = self.loadts(self._raw, mapping['longTermDebt'], self._date)
+        self._bondPayable = self.loadts(self._raw, mapping['bondPayable'], self._date)
         # self._DRNonCur = self.loadts(self._raw, mapping['DRNonCur'], self._date)
         # self._deferTaxLiabilityNonCur = self.loadts(self._raw, mapping['deferTaxLiabilityNonCur'], self._date)
         # self._otherNonCurLiability = self.loadts(self._raw, mapping['otherNonCurLiability'], self._date)
         # self._totalNonCurLiability = self.loadts(self._raw, mapping['totalNonCurLiability'], self._date)
         # self._otherLiability = self.loadts(self._raw, mapping['otherLiability'], self._date)
-        # self._capitalLease = self.loadts(self._raw, mapping['capitalLease'], self._date)
+        self._capitalLease = self.loadts(self._raw, mapping['capitalLease'], self._date)
         # self._totalLiability = self.loadts(self._raw, mapping['totalLiability'], self._date) 
         # self._preStock = self.loadts(self._raw, mapping['preStock'], self._date)
         # self._comStock = self.loadts(self._raw, mapping['comStock'], self._date)
@@ -118,9 +120,9 @@ class balancest(UtilityMixin):
     # def goodwillIntangibleAsset(self):
     #     return self._goodwillIntangibleAsset
 
-    # @property
-    # def ltInvest(self):
-    #     return self._ltInvest
+    @property
+    def ltInvest(self):
+        return self._ltInvest
 
     # @property
     # def taxAsset(self):
@@ -150,9 +152,13 @@ class balancest(UtilityMixin):
     # def AP(self):
     #     return self._AP
 
-    # @property
-    # def shortTermDebt(self):
-    #     return self._shortTermDebt
+    @property
+    def stDebt(self):
+        return self._stDebt
+
+    @property
+    def notePayable(self):
+        return self._notePayable
 
     # @property
     # def taxPayable(self):
@@ -170,9 +176,13 @@ class balancest(UtilityMixin):
     # def totalCurLiability(self):
     #     return self._totalCurLiability
 
-    # @property
-    # def ltDebt(self):
-    #     return self._ltDebt
+    @property
+    def ltDebt(self):
+        return self._ltDebt
+
+    @property
+    def bondPayable(self):
+        return self._bondPayable
 
     # @property
     # def DRNonCur(self):
@@ -194,9 +204,9 @@ class balancest(UtilityMixin):
     # def otherLiability(self):
     #     return self._otherLiability
 
-    # @property
-    # def capitalLease(self):
-    #     return self._capitalLease
+    @property
+    def capitalLease(self):
+        return self._capitalLease
 
     # @property
     # def totalLiability(self):

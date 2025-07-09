@@ -13,7 +13,7 @@ class engine(object):
 
     @classmethod
     def WACC(cls, return_on_equity, return_on_debt, equityWeight, debtWeight):
-        return (equityWeight * return_on_equity + debtWeight * return_on_debt) / 100
+        return equityWeight * return_on_equity + debtWeight * return_on_debt
 
     @classmethod
     def LTGrowthEngine(cls):

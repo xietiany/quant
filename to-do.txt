@@ -1,0 +1,24 @@
+07-07
+# Fix the setter problem
+# separate growth calculation horizon and valuation horizon
+
+# growth model improvement, no hard coding
+# Free cash flow calculation
+# WACC calculation
+        # -stock price, beta, market return
+        # -deta and equity calculation
+
+# conservative valuation when profit in downturn 
+
+# note: valuation method determine, staring value, growth calculation, fair valua valuation
+
+# backtesting
+
+# portfolio construction
+
+# econ variable option setting, no hard coding
+
+# Revisit Beta and Cost of Debt calculation
+# fix the hard code problem
+
+07-14
