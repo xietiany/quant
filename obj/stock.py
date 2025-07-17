@@ -22,7 +22,7 @@ class stock(engine):
         self._price = price(self._ticker)
         # self._valuation = valuation(self._ticker)
         # self._ratio = ratio(self._ticker, self._period, self._ratiotype)
-        # self._div = dividend(self._ticker)
+        self._div = dividend(self._ticker)
 
         
         # stock characteristics setup
@@ -90,6 +90,10 @@ class stock(engine):
         return self._div
 
     @property
+    def price(self):
+        return self._price
+
+    @property
     def taxRate(self):
         return self._taxRate
     
@@ -152,13 +156,13 @@ class stock(engine):
         self._growthcalculationHorizon = growthCalcuHorizon
 
     def MVEquity(self):
-        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).to_list()[0]
+        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).sort_index(ascending=False).to_list()[0]
         return self._MVEquity
     
     def MVDebt(self):
         self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
         self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
-        self._balancest.capitalLease.fillna(0)).to_list()[0]
+        self._balancest.capitalLease.fillna(0)).sort_index(ascending=False).to_list()[0]
         return self._MVDebt
 
     def EV(self):
@@ -180,7 +184,22 @@ class stock(engine):
         self._costEquity = self._rf + self._beta * (self._marketReturn - self._rf)
     
     def costDebt(self):
-        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).to_list()[0]
+        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).sort_index(ascending=False).to_list()[0]
+
+    def PS(self):
+        pass
+    
+    def PE(self):
+        pass
+
+    def PB(self):
+        pass
+    
+    def EVtoEBITDA(self):
+        pass
+
+    def PEG(self):
+        pass
 
 
     @property
@@ -237,11 +256,13 @@ class stock(engine):
     def firststateGrowthEngine(self):
         profit = self.incomest.eps
         if self._growthCalcuMethod == "earning":
-            profit = self.incomest.eps
+            profit = self.incomest.eps.sort_index(ascending=False)
         elif self._growthCalcuMethod == "fcfe":
-            profit = self.cashflowst.freeCF / self.incomest.shares
-        elif self._growthCalcuMethod == "NI":
-            profit = self.incomest.netInc
+            profit = (self.cashflowst.freeCF / self.incomest.shares).sort_index(ascending=False)
+        # elif self._growthCalcuMethod == "NI":
+        #     profit = self.incomest.netInc.sort_index(ascending=False)
+        elif self._growthCalcuMethod == "div":
+            profit = self.div.div.sort_index(ascending=False)
         starting = profit.iloc[0]
         if starting < 0:
             raise ValueError("the most recent year profit is negative, try other approach")
@@ -249,7 +270,7 @@ class stock(engine):
         if last < 0:
             raise ValueError("the last value is negative, try different year")
         if last > starting:
-            raise ValueError("profit is downtrend, try other approach")
+            print("profit is downtrend,  be aware")
         periodInv = 1 / self._growthCalcuHorizon
         self._firstStageGrowth = ((starting / last) ** periodInv - 1) * 100
 
@@ -260,7 +281,9 @@ class stock(engine):
         ### use if else condition to get the secondstategrowth
         if not self._firstStageGrowth:
             raise ValueError("Not initialzie the first stage growth rate")
-        if self._firstStageGrowth <= 10:
+        if self._firstStageGrowth <= 5:
+            self._secondStageGrowth = self._firstStageGrowth
+        elif self._firstStageGrowth <= 10:
             self._secondStageGrowth = 5
         elif self._firstStageGrowth <= 20:
             self._secondStageGrowth = 10
@@ -271,6 +294,9 @@ class stock(engine):
         else:
             self._secondStageGrowth = 30
 
+        if self._firstStageGrowth < 0:
+            self._secondStageGrowth = self._firstStageGrowth
+
         return self._secondStageGrowth
         
 
@@ -278,12 +304,17 @@ class stock(engine):
         # to-do: We should have a table config for this parameter
         if not self._secondStageGrowth:
             raise ValueError("Not initialize the second stage growth rate")
-        if self._secondStageGrowth <= 10:
+        if self._secondStageGrowth <= 5:
+            self._LTGrowth = self._secondStageGrowth
+        elif self._secondStageGrowth <= 10:
             self._LTGrowth = 5
         elif self._secondStageGrowth <= 20:
             self._LTGrowth = 8
         else:
             self._LTGrowth = 10
+
+        # if self._secondStageGrowth < 0:
+        #     self._LTGrowth = self._secondStageGrowth
         return self._LTGrowth
 
     @property
@@ -329,17 +360,17 @@ class stock(engine):
         '''
         Option could be "fcfe, earning, ri"
         '''
-        # self._valuationMethod = option
-        # if self._valuationMethod == "fcfe":
-        #     self._starting = float(self.cashflowst.freeCF.iloc[0] / self.incomest.shares.iloc[0])
-        # elif self._valuationMethod == "earning":
-        #     self._starting = float(self.incomest.eps.iloc[0])
-        # elif self._valuationMethod == "div":
-        #     self._starting = float(self.div.divAdj.iloc[0])
-        # if self._starting <= 0:
-        #     raise ValueError("starting value should be greater than 0, consider other approach")
         self._valuationMethod = option
-        self._starting = float(self.incomest.eps.iloc[0])
+        if self._valuationMethod == "fcfe":
+            self._starting = (self.cashflowst.freeCF / self.incomest.shares).sort_index(ascending=False).iloc[0]
+        elif self._valuationMethod == "earning":
+            self._starting = self.incomest.eps.sort_index(ascending=False).iloc[0]
+        elif self._valuationMethod == "div":
+            self._starting = self.div.div.sort_index(ascending=False).iloc[0]
+        if self._starting <= 0:
+            raise ValueError("starting value should be greater than 0, consider other approach")
+        # self._valuationMethod = option
+        # self._starting = float(self.incomest.eps.iloc[0])
 
     # @property
     # def freecashtoEquity(self):
@@ -394,6 +425,11 @@ class stock(engine):
         self.firststateGrowthEngine()
         self.secondstateGrowthEngine()
         self.LTGrowthEngine() # Notice that this function including the engine, becuase there is another option for choosing LT growth
+
+        if self._RR < self._LTGrowth + 5:
+            print("the current required rate of return is", self._RR)
+            print("manually set the RR to be 5 percent greater than long term growth")
+            self._RR = self._LTGrowth + 5 # hard code problem
     
     @property
     def reporting(self):

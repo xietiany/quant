@@ -21,4 +21,29 @@
 # Revisit Beta and Cost of Debt calculation
 # fix the hard code problem
 
+# valuation handling
+# 1. Negative starting value - PE, PB, PS, or 手动算未来现金流     	# to-do
+# 2. Downturn trend - 							# Fixed
+# 3. Long term growth is less RR - 					# hard code
+# 4. Fix the issue when RR is two low     				# hard code
+
+# 5. Adjust the starting and growth by quarter value
+# 6. FCFP, if a firm invest into infra a lot, what then
+# 7. 002230 why pretax income lower so many                             # some expenses doesn't show in the yahoo finance
+# 8. 从0到1的股票怎么识别
+# 9. 000333 和 000651 营收                                               # done, verified, 000333 is better
+# 10. Add more expense in the income st
+# 11. Add the dividend valuation
+
+11. how to make sure the index is the same, dividend send the financial report index? Dividend only has annual information
+12. Notice that div index datetime is hard coded
+
+
 07-14
+# backtesting period valuation
+# backtesting plot
+# deploy to website
+# growth model
+
+07-21
+# econ environment

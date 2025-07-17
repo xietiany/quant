@@ -251,11 +251,17 @@ ratioMapping = {
 
 dividendMapping = {
     "date": "date",
-    "label": "label",
-    "divAdj": "adjDividend",
-    "div": "dividend",
-    "recordDate": "recordDate",
-    "paymentDate": "paymentDate",
+    # "label": "label",
+    # "divAdj": "adjDividend",
+    # "div": "dividend",
+    # "recordDate": "recordDate",
+    # "paymentDate": "paymentDate",
+    "reportDate": "报告时间",
+    "divType": "分红类型",
+    "shareAdd": "送股比例",
+    "shareConvert": "转增比例",
+    "div": "派息比例",
+    # "payoutRatio": "股利支付率",
     "declarationDate": "declarationDate"
 }
 

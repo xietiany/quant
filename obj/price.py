@@ -6,6 +6,11 @@ import akshare as ak
 class price(UtilityMixin):
     def __init__(self, ticker, start_date="20000101", end_date="20251231", adjust="qfq"):
         self._raw = ak.stock_zh_a_daily(symbol=ticker, start_date=start_date, end_date=end_date, adjust=adjust)
+        
+        self._raw["date"] = pd.to_datetime(self._raw["date"])
+        self._raw['Year'] = self._raw['date'].dt.year
+        self._raw['Quarter'] = self.raw['date'].dt.quarter
+
 
         self._latestQuarterMarketPriceCalc()
 
@@ -16,6 +21,25 @@ class price(UtilityMixin):
     @property
     def latestQuarterMarketPrice(self):
         return self._current
+
+    def _groupQuarter(self):
+        return self._raw.groupby(['Year', 'Quarter'])
+    
+    def quarterMax(self):
+        groupData = self._groupQuarter()
+        return groupData["close"].max().reset_index()
+
+    def quarterMean(self):
+        groupData = self._groupQuarter()
+        return groupData["close"].mean().reset_index()
+    
+    def topTenMax(self):
+        groupData = self._groupQuarter()
+        return groupData["close"].apply(lambda x: x.nlargest(10).max())
+    
+    def topTenMean(self):
+        groupData = self._groupQuarter()
+        return groupData["close"].apply(lambda x: x.nlargest(10).mean())
 
     def _latestQuarterMarketPriceCalc(self, start="2025-04-01", end="2025-06-30"):
         '''
