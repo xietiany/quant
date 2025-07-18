@@ -45,5 +45,9 @@
 # deploy to website
 # growth model
 
+# three stage, two stage, one stage(especially one stage, long term growth is undervalued? Not recommend one stage method now)
+# remove non-used code from previous data version
+# module path problem
+
 07-21
 # econ environment

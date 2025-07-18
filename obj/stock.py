@@ -120,7 +120,7 @@ class stock(engine):
     def secondStageGrowthValue(self):
         return self._secondStageGrowth
 
-    def secondStageGrowthValue(self, overrideValue):
+    def secondStageGrowthValueOverride(self, overrideValue):
         self._secondStageGrowth = overrideValue
 
     @property
