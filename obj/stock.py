@@ -353,7 +353,7 @@ class stock(engine):
             print("using earning per share as forecasting cashflow ", self._starting)
         elif self._valuationMethod == "div":
             print("using dividend as forecasting cashflow", self._starting)
-        return self._starting
+        return self._valuationMethod
     
     @valuationMethod.setter
     def valuationMehod(self, option="fcfe"):
@@ -434,3 +434,7 @@ class stock(engine):
     @property
     def reporting(self):
         pass
+
+    @property
+    def starting(self):
+        return self._starting
