@@ -23,9 +23,22 @@ class dividend(UtilityMixin):
         # self._paymentDate = self.loadts(self._raw, self._mapping["paymentDate"], self._date)
         # self._declarationDate = self.loadts(self._raw, self._mapping["declarationDate"], self._date)
 
+    def _func(self, x):
+        if x["报告时间"]:
+            return datetime(int(x["报告时间"][0:4]), 12, 31)
+        else: # if 报告时间 is None
+            return datetime(int(x["实施方案公告日期"].year), 12, 31) 
+
     def _divTransfer(self, df):
-        df = df.fillna(0)
-        df["date"] = df["报告时间"].apply(lambda x: datetime(int(x[0:4]), 12, 31)) # hard code
+        '''
+        Be careful, the date is hard coded to be 12-31 of the year
+        This is because the data is reported at the end of the year, and we want to
+        use the date as the end of the year for dividend calculations.  
+
+        Be careful the date is None and not continuous.
+        '''
+        df["date"] = df.apply(lambda x: self._func(x), axis=1)  # hard code, dealing with None values in 报告时间
+        df = df.fillna(0) # other None value will be filled with 0
         result = df.groupby("date")[["送股比例", "转增比例", "派息比例"]].sum().reset_index("date").to_dict('index')
         return result
 

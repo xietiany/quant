@@ -28,12 +28,12 @@
 # 4. Fix the issue when RR is two low     				# hard code
 
 # 5. Adjust the starting and growth by quarter value
-# 6. FCFP, if a firm invest into infra a lot, what then
+# 6. FCFP, if a firm invest into infra a lot, what then          
 # 7. 002230 why pretax income lower so many                             # some expenses doesn't show in the yahoo finance
 # 8. 从0到1的股票怎么识别
 # 9. 000333 和 000651 营收                                               # done, verified, 000333 is better
 # 10. Add more expense in the income st
-# 11. Add the dividend valuation
+# 11. Add the dividend valuationv                                       # done
 
 11. how to make sure the index is the same, dividend send the financial report index? Dividend only has annual information
 12. Notice that div index datetime is hard coded
@@ -42,8 +42,8 @@
 07-14
 # backtesting period valuation
 # backtesting plot
-# deploy to website
-# growth model
+# deploy to website                  # Delayed
+# growth model                       # Delayed
 
 # three stage, two stage, one stage(especially one stage, long term growth is undervalued? Not recommend one stage method now)
 # remove non-used code from previous data version
@@ -51,3 +51,25 @@
 
 07-21
 # econ environment
+# PE PS method                       # top priority
+# overvalue/undervalue: past 5 years are in high growth or downturn, but is not reflected in recent years. -> growth model
+# quarterly valuation - all parameter should be on the timely accurate
+# backtesting
+# add more expenses including three financial report, add a warning sign if any indicator is abnormal,
+
+# relative path
+# growth model
+# deploy
+
+07-28
+# config and hard-code problem
+# dashboard visulization
+
+
+08-04
+# div null, grouwth null
+# how to deal with some year data missing problem
+# how to deal with new initialized stock
+# some ticker doesn't have div output, new stock
+# 300760 股息最新一年的还没发完，怎么算
+# current price lag - 2025 走的是2024的股价估值，用每个quarter来计算

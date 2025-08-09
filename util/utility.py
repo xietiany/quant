@@ -41,13 +41,22 @@ class UtilityMixin(object):
         # for item in raw:
         #     res.append(item[target])
         # return pd.Series(res, index=key)
-
+        warning = False
         for _, value in raw.items():
-            res.append(value[target])
+            if target in value:
+                res.append(value[target])
+            else:
+                if not warning:
+                    print(f"Warning: {target} not found in data for key {key}. Returning None.")
+                    warning = True
+                res.append(None)
         return pd.Series(res, index=key)
     
     @classmethod
     def loadsingle(cls, raw, target):
+        if not raw:
+            print(f"Warning: No data available for target {target}. Returning None.")
+            return None
         return raw[0][target]
     
     @classmethod
@@ -56,6 +65,13 @@ class UtilityMixin(object):
         # for item in raw:
         #     res.append(item[target])
         # return res
+        warning = False
         for key, value in raw.items():
-            res.append(value[target])
+            if target in value:
+                res.append(value[target])
+            else:
+                if not warning:
+                    warning = True
+                    print(f"Warning: {target} not found in data for key {key}. Returning None.")
+                res.append(None)
         return res

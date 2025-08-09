@@ -241,10 +241,11 @@ class stock(engine):
         stockHist = self._price.raw
         stock_data = stockHist[(stockHist["date"].astype(str) >= start) & (stockHist["date"].astype(str) <= end)]["close"]
         market_data = self._marketIndex[(self._marketIndex["date"].astype(str) >= start) & (self._marketIndex["date"].astype(str) <= end)]["close"]
-
+        if len(stock_data) != len(market_data):
+            raise ValueError("Stock data and market data must have the same length for beta calculation.")
         stock_returns = stock_data.pct_change().dropna().to_list()
         market_returns = market_data.pct_change().dropna().to_list()
-
+        
         covariance = np.cov(stock_returns, market_returns)[0,1]
         market_variance = np.var(market_returns)
 
@@ -266,6 +267,8 @@ class stock(engine):
         starting = profit.iloc[0]
         if starting < 0:
             raise ValueError("the most recent year profit is negative, try other approach")
+        if len(profit) < self._growthCalcuHorizon + 1:
+            raise ValueError("the profit data is not enough for growth calculation, try other approach")
         last = profit.iloc[0 + self._growthCalcuHorizon]
         if last < 0:
             raise ValueError("the last value is negative, try different year")

@@ -20,9 +20,11 @@ class incomest(UtilityMixin):
     #     self._grossprofit = self.loadts(self._raw, mapping['grossProfit'], self._date)
     #     self._margin = self.loadts(self._raw, mapping['margin'], self._date)
         
-    #     self._rdExp = self.loadts(self._raw, mapping['R&DExpense'], self._date)
-    #     self._adminExp = self.loadts(self._raw, mapping['AdminExpense'], self._date)
-    #     self._marketExp = self.loadts(self._raw, mapping['MarketingExpense'], self._date)
+        self._rdExp = self.loadts(self._raw, mapping['R&DExpense'], self._date)
+        self._operaTax = self.loadts(self._raw, mapping['operaTax'], self._date)
+        self._adminExp = self.loadts(self._raw, mapping['AdminExpense'], self._date)
+        self._marketExp = self.loadts(self._raw, mapping['MarketingExpense'], self._date)
+        
     #     self._generalExp = self.loadts(self._raw, mapping['Admin&MarketingExpense'], self._date)
     #     self._otherExp = self.loadts(self._raw, mapping['otherExpense'], self._date)
     #     self._operaExp = self.loadts(self._raw, mapping['operatingExpense'], self._date)
@@ -30,7 +32,10 @@ class incomest(UtilityMixin):
         
         self._intInc = self.loadts(self._raw, mapping['interstIncome'], self._date)
         self._intExp = self.loadts(self._raw, mapping['interstExpense'], self._date)
-    #     self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
+        self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
+        self._assetDispose = self.loadts(self._raw, mapping['asseetDispose'], self._date)
+        self._creditImpairment = self.loadts(self._raw, mapping['creditImpairment'], self._date)
+        self._otherInc = self.loadts(self._raw, mapping['otherInc'], self._date)
     #     self._ebitdaRatio = self.loadts(self._raw, mapping['ebitdaRatio'], self._date)
     #     self._ebitda = self.loadts(self._raw, mapping['ebitda'], self._date)
     #     self._operaInc = self.loadts(self._raw, mapping['operatingIncome'], self._date)
@@ -81,18 +86,38 @@ class incomest(UtilityMixin):
     # def margin(self):
     #     return self._margin
     
-    # @property
-    # def rdExp(self):
-    #     return self._rdExp
+    @property
+    def rdExp(self):
+        return self._rdExp
     
-    # @property
-    # def adminExp(self):
-    #     return self._adminExp
+    @property
+    def adminExp(self):
+        return self._adminExp
 
-    # @property
-    # def marketExp(self):
-    #     return self._marketExp
+    @property
+    def marketExp(self):
+        return self._marketExp
 
+    @property
+    def operaTax(self):
+        return self._operaTax
+    
+    @property
+    def DA(self):
+        return self._DA
+
+    @property
+    def assetDispose(self):
+        return self._assetDispose   
+
+    @property
+    def creditImpairment(self):
+        return self._creditImpairment       
+    
+    @property
+    def otherInc(self):
+        return self._otherInc
+    
     # @property
     # def generalExp(self):
     #     return self._generalExp
@@ -116,10 +141,6 @@ class incomest(UtilityMixin):
     @property
     def intExp(self):
         return self._intExp
-
-    # @property
-    # def DA(self):
-    #     return self._DA
 
     # @property
     # def ebitdaRatio(self):
