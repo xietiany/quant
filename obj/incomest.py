@@ -34,7 +34,8 @@ class incomest(UtilityMixin):
         self._intInc = self.loadts(self._raw, mapping['interstIncome'], self._date)
         self._intExp = self.loadts(self._raw, mapping['interstExpense'], self._date)
         self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
-        self._assetDispose = self.loadts(self._raw, mapping['asseetDispose'], self._date)
+        # self._assetDispose = self.loadts(self._raw, mapping['asseetDispose'], self._date)
+        self._parentNetInc = self.loadts(self._raw, mapping['parentNetIncome'], self._date)
         self._creditImpairment = self.loadts(self._raw, mapping['creditImpairment'], self._date)
         self._otherInc = self.loadts(self._raw, mapping['otherInc'], self._date)
     #     self._ebitdaRatio = self.loadts(self._raw, mapping['ebitdaRatio'], self._date)
@@ -57,7 +58,7 @@ class incomest(UtilityMixin):
         self._init() # calculate some non-fetch variable
 
     def _init(self):
-        self._shares = self._netInc / self._eps
+        self._shares = self._parentNetInc / self._eps
 
     @property
     def raw(self):
@@ -178,6 +179,10 @@ class incomest(UtilityMixin):
     @property
     def netInc(self):
         return self._netInc
+
+    @property
+    def parentNetInc(self):
+        return self._parentNetInc
     
     # @property
     # def netIncRatio(self):

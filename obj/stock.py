@@ -403,14 +403,20 @@ class stock(engine):
         elif self._valuationMethod == "div":
             self._startingList = self.div.div
         if not date:
-            self._starting = self._startingList.iloc[0]
+            if self._period == "quarter":
+                self._starting = sum(self._startingList.iloc[0:4])
+            else:
+                self._starting = self._startingList.iloc[0]
         else:
-            self._starting = self._startingList[date]
+            if self._period == "quarter":
+                restDays = self.get_last_day_of_quarters(date)
+                res = [self._startingList[date]]
+                for each in restDays:
+                    res.append(self._startingList[each])
+                self._starting = sum(res)
+            else:
+                self._starting = self._startingList[date]
         # to-do: check the quarter starting value annulization
-        if self._period == "quarter":
-            self._starting *= 4
-        elif self._period == "annual":
-            pass
         if self._starting <= 0:
             raise ValueError("starting value should be greater than 0, consider other approach")
 

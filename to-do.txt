@@ -89,8 +89,9 @@
 
 # remove sort_index
 
-# how to determine quarter starting value, annualization? - to-do
+# how to determine quarter starting value, annualization? - to-do sum of latest four quarters
 # bug netInc / shares not correct share 要用 parent_netInc 来算
 		-1. Distinguish net profit and parent-netprofitta
+# do quarter on other variable: 
 # 一些跳过<0, not enough data的问题，比较，画图
-# distinguish valuation horizon and growth calculation horizon
+# distinguish valuation horizon and growth calculation horizon                   -done

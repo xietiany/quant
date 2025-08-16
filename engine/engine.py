@@ -230,3 +230,28 @@ class engine(object):
             return last_day_last_quarter
         else:
             raise ValueError("Invalid period specified. Use 'annual' or 'quarter'.")
+
+    @classmethod
+    def get_last_day_of_quarters(cls, input_date, num_quarters=3):
+        """
+        Returns a list of dates representing the last day of the current day's equivalent
+        in the last 'num_quarters' completed quarters.
+        """
+        last_days = []
+
+        for i in range(1, num_quarters + 1):
+            # Calculate the start of the quarter 'i' quarters ago
+            # First, go back to the first day of the current quarter
+            current_quarter_start = date(input_date.year, (input_date.month - 1) // 3 * 3 + 1, 1)
+            
+            # Then, subtract 'i' quarters from that start date
+            target_quarter_start = current_quarter_start - relativedelta(months=3 * i)
+            
+            # Find the last day of that target quarter
+            # This is the day before the start of the next quarter
+            next_quarter_start = target_quarter_start + relativedelta(months=3)
+            last_day_of_quarter = next_quarter_start - relativedelta(days=1)
+            
+            last_days.append(last_day_of_quarter)
+            
+        return last_days

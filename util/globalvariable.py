@@ -30,6 +30,7 @@ mapping = {
     # 'incomeBeforeTaxRatio': 'incomeBeforeTaxRatio',
     # 'incomeTaxExpense': 'incomeTaxExpense',
     'netIncome': 'NETPROFIT',
+    'parentNetIncome': 'PARENT_NETPROFIT', #  Is this net income?
     # 'netIncomeRatio': 'netIncomeRatio',
     'eps': 'BASIC_EPS',
     # 'epsdiluted': 'epsdiluted',
