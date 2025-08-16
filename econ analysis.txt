@@ -1,0 +1,7 @@
+1. Econ and real estate relationship
+2. think about the unemployment rate
+3. 了解稳定币，债券，大国战略
+4. M2
+5. 巴菲特现金比列
+6. 分析美股个股
+7. build a recession model. With macro variable

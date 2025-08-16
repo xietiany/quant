@@ -36,8 +36,9 @@ class stock(engine):
         self._valuationStage = "single" # two, three
         self._valuationMethod = "fcfe" # either fcfe or earning
         self._starting = float(self.incomest.eps.iloc[0]) # earning, NI
-        self._growthCalcuMethod = "earning" # fcfe, NI
-        self._growthCalcuHorizon = 5
+        self._growthCalcMethod = "earning" # fcfe, NI
+        self._growthCalcHorizon = 5
+        self._valuationHorizon = 5
         
         # Econ Variables
         self._macro = econ(taxRate = 25, rf = 1.64)
@@ -140,29 +141,37 @@ class stock(engine):
         self._valuationStage = valuationStage
 
     @property
-    def growthCalcuMethod(self):
-        return self._growthCalcuMethod
+    def growthCalcMethod(self):
+        return self._growthCalcMethod
 
-    @growthCalcuMethod.setter
-    def growthCalcuMethod(self, growthCalcuMethod = "earning"):
-        self._growthCalcuMethod = growthCalcuMethod
+    @growthCalcMethod.setter
+    def growthCalcMethod(self, growthCalcMethod = "earning"):
+        self._growthCalcMethod = growthCalcMethod
 
     @property
-    def growthCalcuHorizon(self):
-        return self._growthCalcuHorizon
+    def growthCalcHorizon(self):
+        return self._growthCalcHorizon
 
-    @growthCalcuHorizon.setter
-    def growthCalcuHorizon(self, growthCalcuHorizon = 5):
-        self._growthcalculationHorizon = growthCalcuHorizon
+    @growthCalcHorizon.setter
+    def growthCalcHorizon(self, value = 5):
+        self._growthCalcHorizon = value
+
+    @property
+    def valuationHorizon(self):
+        return self._valuationHorizon
+
+    @valuationHorizon.setter
+    def valuationHorizon(self, value = 5):
+       self._valuationHorizon = value
 
     def MVEquity(self):
-        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).sort_index(ascending=False).to_list()[0]
+        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).to_list()[0]
         return self._MVEquity
     
     def MVDebt(self):
         self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
         self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
-        self._balancest.capitalLease.fillna(0)).sort_index(ascending=False).to_list()[0]
+        self._balancest.capitalLease.fillna(0)).to_list()[0]
         return self._MVDebt
 
     def EV(self):
@@ -184,7 +193,7 @@ class stock(engine):
         self._costEquity = self._rf + self._beta * (self._marketReturn - self._rf)
     
     def costDebt(self):
-        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).sort_index(ascending=False).to_list()[0]
+        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).to_list()[0]
 
     def PS(self):
         pass
@@ -233,6 +242,8 @@ class stock(engine):
         self._WACCApproach = WACCApproach
         if self._WACCApproach:
             rate = self.WACC(self._costEquity, self._costDebt, self._equityWeight, self._debtWeight)
+        else:
+            rate = self.CAPM(self._rf, self._marketReturn, self._beta)
         if rate <= 0:
             raise ValueError("rate should be greater than 0")
         self._RR = rate
@@ -254,27 +265,27 @@ class stock(engine):
     def _smooth(self):
         pass
 
-    def firststateGrowthEngine(self):
+    def firststateGrowthEngine(self, date_now=None, date_pre=None):
         profit = self.incomest.eps
-        if self._growthCalcuMethod == "earning":
-            profit = self.incomest.eps.sort_index(ascending=False)
-        elif self._growthCalcuMethod == "fcfe":
-            profit = (self.cashflowst.freeCF / self.incomest.shares).sort_index(ascending=False)
-        # elif self._growthCalcuMethod == "NI":
-        #     profit = self.incomest.netInc.sort_index(ascending=False)
-        elif self._growthCalcuMethod == "div":
-            profit = self.div.div.sort_index(ascending=False)
-        starting = profit.iloc[0]
+        if self._growthCalcMethod == "earning":
+            profit = self.incomest.eps
+        elif self._growthCalcMethod == "fcfe":
+            profit = (self.cashflowst.freeCF / self.incomest.shares)
+        # elif self._growthCalcMethod == "NI":
+        #     profit = self.incomest.netInc
+        elif self._growthCalcMethod == "div":
+            profit = self.div.div
+        starting = profit[date_now]
         if starting < 0:
             raise ValueError("the most recent year profit is negative, try other approach")
-        if len(profit) < self._growthCalcuHorizon + 1:
+        if date_pre not in profit:  
             raise ValueError("the profit data is not enough for growth calculation, try other approach")
-        last = profit.iloc[0 + self._growthCalcuHorizon]
+        last = profit[date_pre]
         if last < 0:
             raise ValueError("the last value is negative, try different year")
         if last > starting:
             print("profit is downtrend,  be aware")
-        periodInv = 1 / self._growthCalcuHorizon
+        periodInv = 1 / self._growthCalcHorizon
         self._firstStageGrowth = ((starting / last) ** periodInv - 1) * 100
 
         # to-do:first value must be positive as well as the last value
@@ -364,14 +375,14 @@ class stock(engine):
         Option could be "fcfe, earning, ri"
         '''
         self._valuationMethod = option
-        if self._valuationMethod == "fcfe":
-            self._starting = (self.cashflowst.freeCF / self.incomest.shares).sort_index(ascending=False).iloc[0]
-        elif self._valuationMethod == "earning":
-            self._starting = self.incomest.eps.sort_index(ascending=False).iloc[0]
-        elif self._valuationMethod == "div":
-            self._starting = self.div.div.sort_index(ascending=False).iloc[0]
-        if self._starting <= 0:
-            raise ValueError("starting value should be greater than 0, consider other approach")
+        # if self._valuationMethod == "fcfe":
+        #     self._starting = (self.cashflowst.freeCF / self.incomest.shares).sort_index(ascending=False).iloc[0]
+        # elif self._valuationMethod == "earning":
+        #     self._starting = self.incomest.eps.sort_index(ascending=False).iloc[0]
+        # elif self._valuationMethod == "div":
+        #     self._starting = self.div.div.sort_index(ascending=False).iloc[0]
+        # if self._starting <= 0:
+        #     raise ValueError("starting value should be greater than 0, consider other approach")
         # self._valuationMethod = option
         # self._starting = float(self.incomest.eps.iloc[0])
 
@@ -381,9 +392,31 @@ class stock(engine):
     #     Calculate its own FCFE
     #     """
     #     pass
+    def startingValueInit(self, date=None):
+        """
+        Initialize the starting value
+        """
+        if self._valuationMethod == "fcfe":
+            self._startingList = (self.cashflowst.freeCF / self.incomest.shares)
+        elif self._valuationMethod == "earning":
+            self._startingList = self.incomest.eps
+        elif self._valuationMethod == "div":
+            self._startingList = self.div.div
+        if not date:
+            self._starting = self._startingList.iloc[0]
+        else:
+            self._starting = self._startingList[date]
+        # to-do: check the quarter starting value annulization
+        if self._period == "quarter":
+            self._starting *= 4
+        elif self._period == "annual":
+            pass
+        if self._starting <= 0:
+            raise ValueError("starting value should be greater than 0, consider other approach")
+
 
     @property
-    def FV(self):
+    def FV(self, date=None):
         """
         Notice the parameter in the earning function is the callback attribute
         Therefore it will prin the input information
@@ -393,39 +426,59 @@ class stock(engine):
         print("first stage growth is ", self._firstStageGrowth)
         print("second stage growth is ", self._secondStageGrowth)
         print("long term growth is ", self._LTGrowth)
-        print("growth period is ", self._growthCalcuHorizon)
+        print("growth period is ", self._growthCalcHorizon)
+        print("valuation horizon is ", self._valuationHorizon)
         print("starting value is ", self._starting)
         print("required rate of returen is ", self._RR)
         if self._valuationMethod == "fcfe":
             if self._valuationStage == "single":
                 return self.FCFE(self._starting, self._LTGrowth, self._RR)
             elif self._valuationStage == "two":
-                return self.FCFETwoStage(self._starting, self._firstStageGrowth, self._growthCalcuHorizon, self._LTGrowth, self._RR)
+                return self.FCFETwoStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
             elif self._valuationStage == "three":
-                return self.FCFEThreeStage(self._starting, self._firstStageGrowth, self._growthCalcuHorizon, self._secondStageGrowth, \
-                                        self._growthCalcuHorizon, self._LTGrowth, self._RR)
+                return self.FCFEThreeStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._secondStageGrowth, \
+                                        self._valuationHorizon, self._LTGrowth, self._RR)
 
         elif self._valuationMethod == "earning":
             if self._valuationStage == "single":
                 return self.earning(self._starting, self._LTGrowth, self._RR)
             elif self._valuationStage == "two":
-                return self.earningTwoStage(self._starting, self._firstStageGrowth, self._growthCalcuHorizon, self._LTGrowth, self._RR)
+                return self.earningTwoStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
             elif self._valuationStage == "three":
-                return self.earningThreeStage(self._starting, self._firstStageGrowth, self._growthCalcuHorizon, self._secondStageGrowth, \
-                                        self._growthCalcuHorizon, self._LTGrowth, self._RR)
-
-        return self.FCFE(self._starting, self._LTGrowth, self._RR)
+                return self.earningThreeStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._secondStageGrowth, \
+                                        self._valuationHorizon, self._LTGrowth, self._RR)
+        elif self._valuationMethod == "div":
+            if self._valuationStage == "single":
+                return self.dividendGGM(self._starting, self._LTGrowth, self._RR)
+            elif self._valuationStage == "two":
+                return self.dividendTwoStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
+            elif self._valuationStage == "three":
+                return self.dividendThreeStage(self._starting, self._firstStageGrowth, self._valuationHorizon, \
+                                        self._secondStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
+        else:
+            raise ValueError(f"Unsupported valuation method: {self._valuationMethod}")
 
     def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
-                        valuationStage = "single", growthCalcuMethod = "earning", growthCalcuHorizon = 5):
+                        valuationStage = "single", growthCalcMethod = "earning", growthCalcHorizon = 5, valuationHorizon = 5, date=None):
         self.RR = defaultRateApproach
         self.valuationMehod = valuationMethod
         self._longtermGrowthDefault = defaultLTGrowth
         self._valuationStage = valuationStage
-        self._growthCalcuMethod = growthCalcuMethod
-        self._growthCalcuHorizon = growthCalcuHorizon
+        self._growthCalcMethod = growthCalcMethod
+        self._growthCalcHorizon = growthCalcHorizon
+        self._valuationHorizon = valuationHorizon
 
-        self.firststateGrowthEngine()
+        self._period ### check period to determine starting value and growth value
+
+        ### If not input, the date will be the latest date in the incomest
+        if not date:
+            date = self.defaultDate(period=self._period)
+
+        self._formalDate =self.dateconverter(date, period=self._period)
+        self._compDate = self.compDateConverter(date, growthCalcHorizon, period=self._period)
+        self.startingValueInit(date=self._formalDate)
+
+        self.firststateGrowthEngine(date_now=self._formalDate, date_pre=self._compDate)
         self.secondstateGrowthEngine()
         self.LTGrowthEngine() # Notice that this function including the engine, becuase there is another option for choosing LT growth
 
@@ -441,3 +494,17 @@ class stock(engine):
     @property
     def starting(self):
         return self._starting
+
+    @property
+    def getFormalDate(self):
+        """
+        Get the formal date for the stock
+        """
+        return self._formalDate
+
+    @property
+    def getCompDate(self):
+        """
+        Get the comparison date for the stock
+        """
+        return self._compDate

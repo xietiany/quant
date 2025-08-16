@@ -73,3 +73,24 @@
 # some ticker doesn't have div output, new stock
 # 300760 股息最新一年的还没发完，怎么算
 # current price lag - 2025 走的是2024的股价估值，用每个quarter来计算
+# think about when stock is new, beta calculation and DCF not enough data issue
+
+# div has no quarter
+
+
+08-11
+# add the timepoint valuation, including quarterly valuation
+	-beat, WACC, staring, growth, econ tax and rf， mardet retun, index
+		-- starting, growth
+		-- beta, WACC, econ tax, rf
+		-- market return, index return
+		-- price latest quarter price
+# backtest
+
+# remove sort_index
+
+# how to determine quarter starting value, annualization? - to-do
+# bug netInc / shares not correct share 要用 parent_netInc 来算
+		-1. Distinguish net profit and parent-netprofitta
+# 一些跳过<0, not enough data的问题，比较，画图
+# distinguish valuation horizon and growth calculation horizon

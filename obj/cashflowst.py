@@ -14,7 +14,8 @@ class cashflowst(UtilityMixin):
         elif period == "annual":
             self._raw = ak.stock_cash_flow_sheet_by_yearly_em(symbol=ticker).to_dict('index')
 
-        self._date = self.loadkey(self._raw, mapping['date'])
+        self._dateStr = self.loadkey(self._raw, mapping['date'])
+        self._date = [self.dateConversion(each, withAppendix=True) for each in self._dateStr]
         self._currency = self.loadsingle(self._raw, mapping['currency'])
 
     #     self._netInc = self.loadts(self._raw, mapping['netIncome'], self._date)

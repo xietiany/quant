@@ -1,5 +1,6 @@
 import requests
 import pandas as pd
+from datetime import datetime
 from util.config import config
 
 class UtilityMixin(object):
@@ -50,7 +51,7 @@ class UtilityMixin(object):
                     print(f"Warning: {target} not found in data for key {key}. Returning None.")
                     warning = True
                 res.append(None)
-        return pd.Series(res, index=key)
+        return pd.Series(res, index=key).sort_index(ascending=False)
     
     @classmethod
     def loadsingle(cls, raw, target):
@@ -75,3 +76,19 @@ class UtilityMixin(object):
                     print(f"Warning: {target} not found in data for key {key}. Returning None.")
                 res.append(None)
         return res
+
+    @classmethod
+    def dateConversion(cls, date_str, withAppendix=True):
+        if withAppendix:
+            format_string = "%Y-%m-%d %H:%M:%S"
+            date_object = datetime.strptime(date_str, format_string)
+
+            return date_object.date()
+        else:
+            # format_string = "%Y-%m-%d"
+            # print(type(date_str), date_str)
+            # date_object = datetime.strptime(date_str, format_string)
+
+            date_object = date_str
+
+            return date_object.date()

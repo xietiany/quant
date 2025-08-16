@@ -13,7 +13,8 @@ class dividend(UtilityMixin):
 
         self._mapping = dividendMapping
 
-        self._date = self.loadkey(self._data, self._mapping["date"])
+        self._dateStr = self.loadkey(self._data, self._mapping["date"])
+        self._date = [self.dateConversion(each, withAppendix=False) for each in self._dateStr]
         # self._divAdj = self.loadts(self._raw, self._mapping["divAdj"], self._date)
         self._div = self.loadts(self._data, self._mapping["div"], self._date)
         # self._divType = self.loadts(self._raw, self._mapping["divType"], self._date)
