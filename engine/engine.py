@@ -72,6 +72,26 @@ class engine(object):
         cashflowlistsecond, secondstageending = cls.cashflow(firststageending, secondstageGrowth, RR, secondstagePeriod)
         terminalValue = cls.earning(secondstageending, LTGrowth, RR)
         return terminalValue + sum(cashflowlistfirst) + sum(cashflowlistsecond)
+    
+    @classmethod
+    def singleStage(cls, starting, LTGrowth, RR):
+        divider = ((RR - LTGrowth) / 100)
+        if RR - LTGrowth <= 0:
+            print("RR needs to be greater than LTGrowth")
+        return starting * (1 + LTGrowth / 100) / divider
+
+    @classmethod
+    def TwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
+        cashflowlist, firststageending = cls.cashflow(starting, firststageGrowth, RR, firststagePeriod)
+        terminalValue = cls.earning(firststageending, LTGrowth, RR)
+        return terminalValue + sum(cashflowlist)
+
+    @classmethod
+    def ThreeStage(cls, starting, firststageGrowth, firststagePeriod, secondstageGrowth, secondstagePeriod, LTGrowth, RR):
+        cashflowlistfirst, firststageending = cls.cashflow(starting, firststageGrowth, RR, firststagePeriod)
+        cashflowlistsecond, secondstageending = cls.cashflow(firststageending, secondstageGrowth, RR, secondstagePeriod)
+        terminalValue = cls.earning(secondstageending, LTGrowth, RR)
+        return terminalValue + sum(cashflowlistfirst) + sum(cashflowlistsecond)
 
     @classmethod
     def GGM(cls):

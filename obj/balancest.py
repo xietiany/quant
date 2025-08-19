@@ -34,7 +34,7 @@ class balancest(UtilityMixin):
         # self._totalNonCurAsset = self.loadts(self._raw, mapping['totalNonCurAsset'], self._date)
         # self._otherAsset = self.loadts(self._raw, mapping['otherAsset'], self._date)
         # self._totalAsset = self.loadts(self._raw, mapping['totalAsset'], self._date)
-        # self._inv = self.loadts(self._raw, mapping['inv'], self._date)
+        self._inv = self.loadts(self._raw, mapping['inv'], self._date)
         # self._AP = self.loadts(self._raw, mapping['APs'], self._date)
         self._stDebt = self.loadts(self._raw, mapping['shortTermDebt'], self._date)
         self._notePayable = self.loadts(self._raw, mapping['notePayable'], self._date)
@@ -145,9 +145,9 @@ class balancest(UtilityMixin):
     # def totalAsset(self):
     #     return self._totalAsset
 
-    # @property
-    # def inv(self):
-    #     return self._inv
+    @property
+    def inv(self):
+        return self._inv
 
     # @property
     # def AP(self):

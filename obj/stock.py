@@ -253,6 +253,10 @@ class stock(engine):
         stock_data = stockHist[(stockHist["date"].astype(str) >= start) & (stockHist["date"].astype(str) <= end)]["close"]
         market_data = self._marketIndex[(self._marketIndex["date"].astype(str) >= start) & (self._marketIndex["date"].astype(str) <= end)]["close"]
         if len(stock_data) != len(market_data):
+            # print("Stock data length:", len(stock_data))
+            # print("Market data length:", len(market_data))
+            # print(stock_data)
+            # print(market_data)
             raise ValueError("Stock data and market data must have the same length for beta calculation.")
         stock_returns = stock_data.pct_change().dropna().to_list()
         market_returns = market_data.pct_change().dropna().to_list()
@@ -435,7 +439,7 @@ class stock(engine):
         print("growth period is ", self._growthCalcHorizon)
         print("valuation horizon is ", self._valuationHorizon)
         print("starting value is ", self._starting)
-        print("required rate of returen is ", self._RR)
+        print("required rate of return is ", self._RR)
         if self._valuationMethod == "fcfe":
             if self._valuationStage == "single":
                 return self.FCFE(self._starting, self._LTGrowth, self._RR)
@@ -455,11 +459,11 @@ class stock(engine):
                                         self._valuationHorizon, self._LTGrowth, self._RR)
         elif self._valuationMethod == "div":
             if self._valuationStage == "single":
-                return self.dividendGGM(self._starting, self._LTGrowth, self._RR)
+                return self.singleStage(self._starting, self._LTGrowth, self._RR)
             elif self._valuationStage == "two":
-                return self.dividendTwoStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
+                return self.TwoStage(self._starting, self._firstStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
             elif self._valuationStage == "three":
-                return self.dividendThreeStage(self._starting, self._firstStageGrowth, self._valuationHorizon, \
+                return self.ThreeStage(self._starting, self._firstStageGrowth, self._valuationHorizon, \
                                         self._secondStageGrowth, self._valuationHorizon, self._LTGrowth, self._RR)
         else:
             raise ValueError(f"Unsupported valuation method: {self._valuationMethod}")

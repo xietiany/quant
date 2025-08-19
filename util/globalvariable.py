@@ -47,7 +47,7 @@ mapping = {
     # 'stockComp': 'stockBasedCompensation',
     # 'changeWC': 'changeInWorkingCapital',
     # 'AR': 'accountsReceivables',
-    # 'inv': 'inventory',
+    'inv': 'INVENTORY',
     # 'AP': 'accountsPayables',
     # 'otherWC': 'otherWorkingCapital',
     # 'otherNonCash': 'otherNonCashItems',
