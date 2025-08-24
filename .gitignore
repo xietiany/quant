@@ -1,3 +1,5 @@
 demo.config
 __pycache__/
 .ipynb_checkpoints/
+*.csv
+*.txt

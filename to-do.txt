@@ -95,3 +95,45 @@
 # do quarter on other variable: 
 # 一些跳过<0, not enough data的问题，比较，画图
 # distinguish valuation horizon and growth calculation horizon                   -done
+# quarterly growth smooth
+# 601012 quarterly no operation cash flow
+# 600930 no div report
+# 688139 quarter report Stock data and market data must have the same length for beta calculation. 2024 data missing,12月20号后面的数据少了， debug
+# 
+
+# 08-18
+1. Build other variable for three financial reports
+	- fixed asset investment - missing accumulated depreciation/amortization
+	- all asset investment(including intangible asset), and investment net cashflow
+	- working capital investment
+	- research & development
+	- sales and marketing
+	- NCC, non-cash charge
+	- FCFE
+	- gross profit
+	- ROE
+	- ...
+	- *DQ: not cumulative depreciation/amortization
+2。 quarterly basis calculation for other variables
+	-beat, WACC, staring, growth, econ tax and rf， mardet retun, index
+		-- starting, growth
+		-- beta, WACC, econ tax, rf
+		-- market return, index return
+		-- price latest quarter price
+3. Figure out corner case:
+	-negative earning
+	-data length not match for index and stock
+	-not enough data
+	-no div report
+	-quarterly basis no operation cash flow 
+4. Backtesting
+	-draw plot
+	-error
+5. deploy
+
+1*. Config file
+2*. Long term growth is less RR - 					# hard code
+3* Fix the issue when RR is two low 
+4*。 ratios 
+5* growth model
+6* 新浪财经有更多数据，但是不分quarter/year 数据源

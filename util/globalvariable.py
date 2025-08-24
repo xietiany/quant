@@ -5,22 +5,25 @@ mapping = {
     'date': 'REPORT_DATE',
     'currency': 'CURRENCY',
     'revenue': 'OPERATE_INCOME',
+    'operaCost': 'OPERATE_COST',
     # 'grossProfit': 'grossProfit',
     # 'margin': 'grossProfit',
     # 'Admin&MarketingExpense': 'sellingGeneralAndAdministrativeExpenses',
     'MarketingExpense': 'SALE_EXPENSE',
     'AdminExpense': 'MANAGE_EXPENSE',
     'R&DExpense': 'RESEARCH_EXPENSE',
+    'financeExp': 'FINANCE_EXPENSE',
     'operaTax': 'OPERATE_TAX_ADD',
     # 'otherExpense': 'otherExpenses',
     # 'operatingExpense': 'operatingExpenses',
     # 'cost&expense': 'costAndExpenses',
     'interstIncome': 'FE_INTEREST_INCOME',
     'interstExpense': 'FE_INTEREST_EXPENSE',
-    'D&A': 'ASSET_IMPAIRMENT_INCOME',
+    'assetImpairment': 'ASSET_IMPAIRMENT_INCOME',
     'asseetDispose': 'ASSET_DISPOSAl_INCOME',
     'creditImpairment': 'CREDIT_IMPAIRMENT_INCOME', #  Is this goodwill?
     'otherInc': 'OTHER_INCOME',
+    # 'D&A': 'depreciationAndAmortization',
     # 'ebitda': 'ebitda',
     # 'ebitdaRatio': 'ebitdaratio',
     # 'operatingIncome': 'operatingIncome',
@@ -47,7 +50,6 @@ mapping = {
     # 'stockComp': 'stockBasedCompensation',
     # 'changeWC': 'changeInWorkingCapital',
     # 'AR': 'accountsReceivables',
-    'inv': 'INVENTORY',
     # 'AP': 'accountsPayables',
     # 'otherWC': 'otherWorkingCapital',
     # 'otherNonCash': 'otherNonCashItems',
@@ -76,10 +78,22 @@ mapping = {
     ### ------------------------------- ###
     ### balancesheet statement variable ###
     ### ------------------------------- ###
-    # 'cash&equival': 'cashAndCashEquivalents',
+    'cash&equival': 'MONETARYFUNDS',
     # 'shortTermInvest': 'shortTermInvestments',
     # 'cash&short': 'cashAndShortTermInvestments',
     # 'netReceivables': 'netReceivables',
+    'accountsReceivable': 'ACCOUNTS_RECE',
+    'noteReceivable': 'NOTE_RECE',
+    'accountsPayable': 'ACCOUNTS_PAYABLE',
+    # 'notePayable': 'NOTE_PAYABLE', # this in is below
+    'unearnedRevenue': 'ADVANCE_RECEIVABLES', # this is unearned revenue, liability
+    'prepaidExpense': 'PREPAYMENT', # this is prepaid expense, asset
+    'fixedAsset': 'FIXED_ASSET', # part of PPE
+    'fixedAssetUnderConstruct': 'CIP', # part of PPE
+    'useRightAsset': 'USERIGHT_ASSET', # part of PPE
+    'investedAsset': 'INVEST_REALESTATE',
+    'intangibleAsset': 'INTANGIBLE_ASSET',
+    'goodwill': 'GOODWILL',
     # ## 'inventory', ## In cashflow statement, there is inv map
     # 'otherCurAsset': 'otherCurrentAssets',
     # 'totalCurAsset': 'totalCurrentAssets',
@@ -96,6 +110,7 @@ mapping = {
     # 'APs': 'accountPayables',
     'shortTermDebt': 'SHORT_LOAN',
     'notePayable': 'NOTE_PAYABLE',
+    'inv': 'INVENTORY',
     # 'taxPayable': 'taxPayables',
     # 'DR': 'deferredRevenue',
     # 'otherCurLiability': 'otherCurrentLiabilities',

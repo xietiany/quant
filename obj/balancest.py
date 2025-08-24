@@ -17,6 +17,18 @@ class balancest(UtilityMixin):
         self._dateStr = self.loadkey(self._raw, mapping['date'])
         self._date = [self.dateConversion(each, withAppendix=True) for each in self._dateStr]
         self._currency = self.loadsingle(self._raw, mapping['currency'])
+        self._cashEqui = self.loadts(self._raw, mapping['cash&equival'], self._date)
+        self._AR = self.loadts(self._raw, mapping['accountsReceivable'], self._date)
+        self._noteReceivable = self.loadts(self._raw, mapping['noteReceivable'], self._date)
+        self._AP = self.loadts(self._raw, mapping['accountsPayable'], self._date)
+        self._unearnedRevenue = self.loadts(self._raw, mapping['unearnedRevenue'], self._date)
+        self._prepaidExpense = self.loadts(self._raw, mapping['prepaidExpense'], self._date)
+        self._fixedAsset = self.loadts(self._raw, mapping['fixedAsset'], self._date)
+        self._fixedAssetUnderConstruct = self.loadts(self._raw, mapping['fixedAssetUnderConstruct'], self._date)
+        self._useRightAsset = self.loadts(self._raw, mapping['useRightAsset'], self._date)
+        self._investedAsset = self.loadts(self._raw, mapping['investedAsset'], self._date)
+        self._intangibleAsset = self.loadts(self._raw, mapping['intangibleAsset'], self._date)
+        self._goodwill = self.loadts(self._raw, mapping['goodwill'], self._date)
 
         # self._cashEqui = self.loadts(self._raw, mapping['cash&equival'], self._date)
         # self._stInvest = self.loadts(self._raw, mapping['shortTermInvest'], self._date)
@@ -81,9 +93,53 @@ class balancest(UtilityMixin):
     def currency(self):
         return self._currency
 
-    # @property
-    # def cashEqui(self):
-    #     return self._cashEqui
+    @property
+    def cashEqui(self):
+        return self._cashEqui
+
+    @property
+    def AR(self):
+        return self._AR
+
+    @property
+    def noteReceivable(self):
+        return self._noteReceivable
+
+    @property
+    def AP(self):
+        return self._AP
+
+    @property
+    def unearnedRevenue(self):
+        return self._unearnedRevenue
+    
+    @property
+    def prepaidExpense(self):
+        return self._prepaidExpense
+
+    @property
+    def fixedAsset(self):
+        return self._fixedAsset
+
+    @property
+    def fixedAssetUnderConstruct(self):
+        return self._fixedAssetUnderConstruct
+
+    @property
+    def useRightAsset(self):
+        return self._useRightAsset  
+
+    @property
+    def investedAsset(self):
+        return self._investedAsset  
+
+    @property
+    def goodwill(self):
+        return self._goodwill
+    
+    @property
+    def intangibleAsset(self):
+        return self._intangibleAsset
 
     # @property
     # def stInvest(self):

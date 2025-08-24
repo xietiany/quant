@@ -210,6 +210,30 @@ class stock(engine):
     def PEG(self):
         pass
 
+    def PPE(self):
+        self._PPE = self._balancest.fixedAsset.fillna(0) + self._balancest.fixedAssetUnderConstruct.fillna(0) + self._balancest.useRightAsset.fillna(0)
+        return self._PPE
+
+    def fixedAssetInvestment(self):
+        # self._fixedAssetInvestment = self._PPE.diff(-1) + self._incomest.DA.fillna(0)
+        self._fixedAssetInvestment = self._PPE.fillna(0).diff(-1)
+        return self._fixedAssetInvestment
+
+    def deltaAP(self):
+        self._deltaAP = self._balancest.AP.fillna(0).diff(-1)
+        return self._deltaAP
+    
+    def deltaAR(self):
+        self._deltaAR = self._balancest.AR.fillna(0).diff(-1)
+        return self._deltaAR    
+
+    def deltaInv(self):
+        self._deltaInv = self._balancest.inv.fillna(0).diff(-1)
+        return self._deltaInv
+    
+    def deltaWorkingCapital(self):
+        self._deltaWC = self._deltaAR + self._deltaInv - self._deltaAP
+        return self._deltaWC
 
     @property
     def RR(self):

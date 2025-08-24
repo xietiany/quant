@@ -18,6 +18,7 @@ class incomest(UtilityMixin):
         self._date = [self.dateConversion(each, withAppendix=True) for each in self._dateStr]
         self._currency = self.loadsingle(self._raw, mapping['currency'])
         self._revenue = self.loadts(self._raw, mapping['revenue'], self._date)
+        self._operaCost = self.loadts(self._raw, mapping['operaCost'], self._date)
     #     self._grossprofit = self.loadts(self._raw, mapping['grossProfit'], self._date)
     #     self._margin = self.loadts(self._raw, mapping['margin'], self._date)
         
@@ -25,6 +26,7 @@ class incomest(UtilityMixin):
         self._operaTax = self.loadts(self._raw, mapping['operaTax'], self._date)
         self._adminExp = self.loadts(self._raw, mapping['AdminExpense'], self._date)
         self._marketExp = self.loadts(self._raw, mapping['MarketingExpense'], self._date)
+        self._financeExp = self.loadts(self._raw, mapping['financeExp'], self._date)
         
     #     self._generalExp = self.loadts(self._raw, mapping['Admin&MarketingExpense'], self._date)
     #     self._otherExp = self.loadts(self._raw, mapping['otherExpense'], self._date)
@@ -33,7 +35,9 @@ class incomest(UtilityMixin):
         
         self._intInc = self.loadts(self._raw, mapping['interstIncome'], self._date)
         self._intExp = self.loadts(self._raw, mapping['interstExpense'], self._date)
-        self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
+        
+        # self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
+        # self._assetImpairment = self.loadts(self._raw, mapping['assetImpairment'], self._date)
         # self._assetDispose = self.loadts(self._raw, mapping['asseetDispose'], self._date)
         self._parentNetInc = self.loadts(self._raw, mapping['parentNetIncome'], self._date)
         self._creditImpairment = self.loadts(self._raw, mapping['creditImpairment'], self._date)
@@ -79,6 +83,10 @@ class incomest(UtilityMixin):
     @property
     def revenue(self):
         return self._revenue
+
+    @property
+    def operaCost(self):
+        return self._operaCost
     
     # @property
     # def grossprofit(self):
@@ -103,10 +111,18 @@ class incomest(UtilityMixin):
     @property
     def operaTax(self):
         return self._operaTax
-    
+
     @property
-    def DA(self):
-        return self._DA
+    def financeExp(self):
+        return self._financeExp
+    
+    # @property
+    # def DA(self):
+    #     return self._DA
+
+    @property
+    def assetImpairment(self):
+        return self._assetImpairment
 
     @property
     def assetDispose(self):
