@@ -43,10 +43,12 @@ class stock(engine):
         # Econ Variables
         self._macro = econ(taxRate = 25, rf = 1.64)
         self._taxRate = self._macro.taxRate()
+        self._lowestMarketReturn = self._macro.getLowestMarketReturn()
         self._rf = self._macro.riskFreeRate()
-        self._marketReturn = self._macro.marketReturn()
         self._marketIndex = self._macro.index()
+        self._marketReturn = self._marketReturnCalc()
 
+        self._updateCurrentMarketPrice()
         self._betaCalc()
         self.MVEquity()
         self.MVDebt()
@@ -164,14 +166,18 @@ class stock(engine):
     def valuationHorizon(self, value = 5):
        self._valuationHorizon = value
 
-    def MVEquity(self):
-        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).to_list()[0]
+    def MVEquity(self, input_date=None):
+        if not input_date:
+            input_date = self.get_default_last_day_of_previous_year()
+        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice)[input_date]
         return self._MVEquity
     
-    def MVDebt(self):
+    def MVDebt(self, input_date=None):
+        if not input_date:
+            input_date = self.get_default_last_day_of_previous_year()
         self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
         self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
-        self._balancest.capitalLease.fillna(0)).to_list()[0]
+        self._balancest.capitalLease.fillna(0))[input_date]
         return self._MVDebt
 
     def EV(self):
@@ -186,14 +192,20 @@ class stock(engine):
         self._debtWeight = self._MVDebt / self._EV
         return self._debtWeight
 
-    def costEquity(self):
+    def costEquity(self, input_date=None):
         '''
         CAPM Model
         '''
+        if not input_date:
+            input_date = self.get_default_last_day_of_previous_year()
         self._costEquity = self._rf + self._beta * (self._marketReturn - self._rf)
+        if self._costEquity < 0:
+            self._costEquity = self._lowestMarketReturn
     
-    def costDebt(self):
-        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).to_list()[0]
+    def costDebt(self, input_date=None):
+        if not input_date:
+            input_date = self.get_default_last_day_of_previous_year()
+        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100)[input_date]
 
     def PS(self):
         pass
@@ -273,15 +285,28 @@ class stock(engine):
         self._RR = rate
     
     def _betaCalc(self, start = "2024-01-01", end = "2024-12-31"):
+        if isinstance(start, str):
+            format_string = "%Y-%m-%d"
+            start = pd.to_datetime(start, format=format_string).date()
+        if isinstance(end, str):
+            format_string = "%Y-%m-%d"
+            end = pd.to_datetime(end, format=format_string).date()
+        
         stockHist = self._price.raw
-        stock_data = stockHist[(stockHist["date"].astype(str) >= start) & (stockHist["date"].astype(str) <= end)]["close"]
-        market_data = self._marketIndex[(self._marketIndex["date"].astype(str) >= start) & (self._marketIndex["date"].astype(str) <= end)]["close"]
+        self._marketIndex["date"] = pd.to_datetime(self._marketIndex.date)
+        stockHist["date"] = pd.to_datetime(stockHist.date)
+        stock_data = stockHist[(stockHist["date"].dt.date >= start) & (stockHist["date"].dt.date <= end)].reset_index().set_index("date")["close"]
+        market_data = self._marketIndex[(self._marketIndex["date"].dt.date >= start) & (self._marketIndex["date"].dt.date <= end)].reset_index().set_index("date")["close"]
         if len(stock_data) != len(market_data):
             # print("Stock data length:", len(stock_data))
             # print("Market data length:", len(market_data))
             # print(stock_data)
             # print(market_data)
-            raise ValueError("Stock data and market data must have the same length for beta calculation.")
+            print("Stock data and market data must have the same length for beta calculation.")
+            intercept = set(stock_data.index) & set(market_data.index)
+            stock_data = stock_data.loc[list(intercept)] 
+            market_data = market_data.loc[list(intercept)]
+            print("After alignment, new length:", len(stock_data))
         stock_returns = stock_data.pct_change().dropna().to_list()
         market_returns = market_data.pct_change().dropna().to_list()
         
@@ -290,6 +315,28 @@ class stock(engine):
 
         self._beta = covariance / market_variance
 
+    def _marketReturnCalc(self, start = "2024-01-01", end = "2024-12-31"):
+        if isinstance(start, str):
+            format_string = "%Y-%m-%d"
+            start = pd.to_datetime(start, format=format_string).date()
+        if isinstance(end, str):
+            format_string = "%Y-%m-%d"
+            end = pd.to_datetime(end, format=format_string).date()
+        self._marketIndex["date"] = pd.to_datetime(self._marketIndex.date)
+        selected = self._marketIndex[(self._marketIndex["date"].dt.date >= start) & (self._marketIndex["date"].dt.date <= end)]
+        self._marketReturn = (selected.iloc[-1]['close'] / selected.iloc[0]['close'] - 1) * 100
+        return self._marketReturn
+
+    def _updateCurrentMarketPrice(self, start = "2024-01-01", end = "2024-12-31"):
+        if isinstance(start, str):
+            format_string = "%Y-%m-%d"
+            start = pd.to_datetime(start, format=format_string).date()
+        if isinstance(end, str):
+            format_string = "%Y-%m-%d"
+            end = pd.to_datetime(end, format=format_string).date()
+        self._price._latestQuarterMarketPriceCalc(start, end)
+        return self._price.latestQuarterMarketPrice
+    
     def _smooth(self):
         pass
 
@@ -464,6 +511,12 @@ class stock(engine):
         print("valuation horizon is ", self._valuationHorizon)
         print("starting value is ", self._starting)
         print("required rate of return is ", self._RR)
+        print("the beta is ", self._beta)
+        print("the market return is ", self._marketReturn)
+        print("the cost of equity is ", self._costEquity)
+        print("the cost of debt is ", self._costDebt)
+        print("the equity weight is ", self._equityWeight)
+        print("the debt weight is ", self._debtWeight)
         if self._valuationMethod == "fcfe":
             if self._valuationStage == "single":
                 return self.FCFE(self._starting, self._LTGrowth, self._RR)
@@ -494,6 +547,27 @@ class stock(engine):
 
     def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
                         valuationStage = "single", growthCalcMethod = "earning", growthCalcHorizon = 5, valuationHorizon = 5, date=None):
+        
+        if not date:
+            date = self.defaultDate(period=self._period)
+
+        self._formalDate =self.dateconverter(date, period=self._period)
+        self._compDate = self.compDateConverter(date, growthCalcHorizon, period=self._period)
+        self._startdate, self._enddate = self.get_date_range_from_date(self._formalDate)
+        # self._startdate, self._enddate = self.get_last_year_range(date)
+        # self._lastdaylastyear = self.get_last_day_of_previous_year(date)
+
+        self._updateCurrentMarketPrice(self._startdate, self._enddate) # resset the latest market price
+        self._marketReturnCalc(self._startdate, self._enddate) # reset the market return
+        self._betaCalc(self._startdate, self._enddate)
+        self.MVEquity(self._formalDate)
+        self.MVDebt(self._formalDate)
+        self.EV()
+        self.equityWeight()
+        self.debtWeight()
+        self.costEquity(self._formalDate)
+        self.costDebt(self._formalDate)
+        
         self.RR = defaultRateApproach
         self.valuationMehod = valuationMethod
         self._longtermGrowthDefault = defaultLTGrowth
@@ -502,16 +576,8 @@ class stock(engine):
         self._growthCalcHorizon = growthCalcHorizon
         self._valuationHorizon = valuationHorizon
 
-        self._period ### check period to determine starting value and growth value
-
-        ### If not input, the date will be the latest date in the incomest
-        if not date:
-            date = self.defaultDate(period=self._period)
-
-        self._formalDate =self.dateconverter(date, period=self._period)
-        self._compDate = self.compDateConverter(date, growthCalcHorizon, period=self._period)
         self.startingValueInit(date=self._formalDate)
-
+        
         self.firststateGrowthEngine(date_now=self._formalDate, date_pre=self._compDate)
         self.secondstateGrowthEngine()
         self.LTGrowthEngine() # Notice that this function including the engine, becuase there is another option for choosing LT growth

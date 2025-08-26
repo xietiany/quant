@@ -4,15 +4,12 @@ import numpy as np
 import akshare as ak
 
 class price(UtilityMixin):
-    def __init__(self, ticker, start_date="20000101", end_date="20251231", adjust="qfq"):
+    def __init__(self, ticker, start_date="20000101", end_date="20501231", adjust="qfq"):
         self._raw = ak.stock_zh_a_daily(symbol=ticker, start_date=start_date, end_date=end_date, adjust=adjust)
         
         self._raw["date"] = pd.to_datetime(self._raw["date"])
         self._raw['Year'] = self._raw['date'].dt.year
         self._raw['Quarter'] = self.raw['date'].dt.quarter
-
-
-        self._latestQuarterMarketPriceCalc()
 
     @property
     def raw(self):
@@ -45,6 +42,7 @@ class price(UtilityMixin):
         '''
         to-do: fix the hard code problem
         '''
-        selected = self._raw[(self._raw["date"].astype(str) >= start) & (self._raw["date"].astype(str) <= end)]
+        selected = self._raw[(self._raw["date"].dt.date >= start) & (self._raw["date"].dt.date <= end)]
         self._current = np.mean(selected.close)
 
+        return self._current

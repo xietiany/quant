@@ -8,6 +8,7 @@ class econ(UtilityMixin):
     def __init__(self, taxRate = 25, rf = 1.64):
         self._tax = taxRate
         self._rf = rf
+        self._lowestMarketReturn = 6.0 # for wacc calculation purpose, set a lowest market return
 
         self._indexCalc()
         self._marketReturnCalc()
@@ -20,6 +21,9 @@ class econ(UtilityMixin):
 
     def marketReturn(self):
         return self._marketReturn
+
+    def getLowestMarketReturn(self):
+        return self._lowestMarketReturn
 
     def index(self):
         return self._index

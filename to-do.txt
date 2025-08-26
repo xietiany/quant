@@ -120,6 +120,9 @@
 		-- beta, WACC, econ tax, rf
 		-- market return, index return
 		-- price latest quarter price
+		-- betacalc()
+		-- econ.py: tax and rf, marketreturn
+
 3. Figure out corner case:
 	-negative earning
 	-data length not match for index and stock
@@ -136,4 +139,6 @@
 3* Fix the issue when RR is two low 
 4*。 ratios 
 5* growth model
-6* 新浪财经有更多数据，但是不分quarter/year 数据源
+6* 新浪财经有更多数据，但是不分quarter/year 数据源，例如累计折旧
+7* make rf and econ tax a config file
+8* _markteReturnCal, _betaCalc, _updateCurrentMarketPrice, range date default set into config file
