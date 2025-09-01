@@ -21,21 +21,36 @@ class price(UtilityMixin):
 
     def _groupQuarter(self):
         return self._raw.groupby(['Year', 'Quarter'])
-    
-    def quarterMax(self):
-        groupData = self._groupQuarter()
-        return groupData["close"].max().reset_index()
 
-    def quarterMean(self):
-        groupData = self._groupQuarter()
-        return groupData["close"].mean().reset_index()
+    def _groupYear(self):
+        return self._raw.groupby(['Year'])
     
-    def topTenMax(self):
-        groupData = self._groupQuarter()
+    def Max(self, period='quarter'):
+        if period == 'quarter':
+            groupData = self._groupQuarter()
+        elif period == 'annual':
+            groupData = self._groupYear()
+        return groupData["close"].max()
+
+    def Mean(self, period='quarter'):
+        if period == 'quarter':
+            groupData = self._groupQuarter()
+        elif period == 'annual':
+            groupData = self._groupYear()
+        return groupData["close"].mean()
+    
+    def topTenMax(self, period='quarter'):
+        if period == 'quarter':
+            groupData = self._groupQuarter()
+        elif period == 'annual':
+            groupData = self._groupYear()
         return groupData["close"].apply(lambda x: x.nlargest(10).max())
     
-    def topTenMean(self):
-        groupData = self._groupQuarter()
+    def topTenMean(self, period='quarter'):
+        if period == 'quarter':
+            groupData = self._groupQuarter()
+        elif period == 'annual':
+            groupData = self._groupYear()
         return groupData["close"].apply(lambda x: x.nlargest(10).mean())
 
     def _latestQuarterMarketPriceCalc(self, start="2025-04-01", end="2025-06-30"):

@@ -9,6 +9,7 @@ from obj.price import price
 from engine.engine import engine
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 class stock(engine):
     
@@ -545,6 +546,52 @@ class stock(engine):
         else:
             raise ValueError(f"Unsupported valuation method: {self._valuationMethod}")
 
+    def backtesting(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
+                        valuationStage = "single", growthCalcMethod = "earning", growthCalcHorizon = 5, valuationHorizon = 5, \
+                        start_date = '2022-06-30', end_date = '2025-06-30'):
+        self._res = []
+        self._xaxis = []
+        dates = self.get_dates_ends(start_date, end_date, self._period)
+        for each in dates:
+            temp = []
+            current = each
+            if self._period == 'quarter':
+                next = self.get_last_day_of_next_quarter(each)
+            elif self._period == 'annual':
+                next = self.get_last_day_of_next_year(each)
+            year = next.year
+            quarter = (next.month - 1) // 3 + 1
+            temp = []
+            # print("here", get_last_day_of_next_quarter(each))
+            try:
+                self.initialize(defaultRateApproach = True, valuationMethod = "earning", defaultLTGrowth = False, \
+                                valuationStage = "three", growthCalcMethod = "earning", growthCalcHorizon = 1, valuationHorizon = 5, date=current)
+                fairvalue = self.FV
+                temp.append(fairvalue)
+                if self._period == 'quarter':
+                    temp.append(self.price.topTenMean(self._period).to_dict()[(year, quarter)])
+                    temp.append(self.price.Mean(self._period).to_dict()[(year, quarter)])
+                elif self._period == 'annual':
+                    temp.append(self.price.topTenMean(self._period).to_dict()[year])
+                    temp.append(self.price.Mean(self._period).to_dict()[year])
+                self._xaxis.append(current)
+                self._res.append(temp)
+            except ValueError:
+                print(ValueError)
+
+        self._backtestingDF = pd.DataFrame(data=self._res, index=self._xaxis, columns=["fair value", "top 10 mean", "mean"])
+        plt.plot(self._xaxis, self._res, label = ["fair value", "top 10 mean", "mean"],marker='o', linestyle='-') # For a line plot with markers
+        # Or for a scatter plot:
+        # plt.scatter(x_values, y_values)
+        
+        plt.xticks(rotation=90)
+        plt.xlabel("X-axis")
+        plt.ylabel("Y-axis")
+        plt.title("Plot of Backtesting")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
     def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
                         valuationStage = "single", growthCalcMethod = "earning", growthCalcHorizon = 5, valuationHorizon = 5, date=None):
         
@@ -608,3 +655,7 @@ class stock(engine):
         Get the comparison date for the stock
         """
         return self._compDate
+
+    @property
+    def getBacktestingDF(self):
+        return self._backtestingDF

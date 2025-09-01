@@ -1,6 +1,7 @@
 import numpy as np
+import pandas as pd
 from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
+from dateutil.relativedelta import relativedelta, TH
 
 class engine(object):
 
@@ -331,3 +332,69 @@ class engine(object):
         start_date = date(end_date.year - years, end_date.month, end_date.day)
 
         return start_date, end_date
+
+    @classmethod
+    def get_dates_ends(cls, start_date, end_date, period="quarter"):
+        """
+        Generates a list of the last day of each quarter within a given date range.
+
+        Args:
+            start_date (str or datetime-like): The start date of the range.
+            end_date (str or datetime-like): The end date of the range.
+
+        Returns:
+            list: A list of datetime objects representing the last day of each quarter.
+        """
+        # Create a PeriodIndex with 'Q-DEC' frequency for quarter-end (December)
+        # This automatically aligns to the end of each quarter (March, June, Sept, Dec)
+        if period == "annual":
+            start_date = cls.dateconverter(start_date, period="annual")
+            end_date = cls.dateconverter(end_date, period="annual")
+            year_periods = pd.period_range(start=start_date, end=end_date, freq='A-DEC')
+            year_ends = [period.end_time.date() for period in year_periods]
+            return year_ends
+        elif period != "quarter":
+            quarter_periods = pd.period_range(start=start_date, end=end_date, freq='Q-DEC')
+
+            # Convert each Period object to its end date (Timestamp)
+            quarter_ends = [period.end_time.date() for period in quarter_periods]
+
+            return quarter_ends
+
+    @classmethod
+    def get_last_day_of_next_quarter(cls, input_date):
+        """
+        Calculates the last day of the next calendar quarter from a given date.
+
+        Args:
+            input_date (date): The starting date.
+
+        Returns:
+            date: The last day of the next quarter.
+        """
+        # Determine the start of the current quarter
+        current_quarter_start_month = ((input_date.month - 1) // 3) * 3 + 1
+        current_quarter_start = date(input_date.year, current_quarter_start_month, 1)
+
+        # Add 3 months to get to the start of the next quarter
+        next_quarter_start = current_quarter_start + relativedelta(months=3)
+
+        # Add 3 more months to get to the start of the quarter after the next,
+        # then subtract one day to get the last day of the next quarter.
+        last_day_of_next_quarter = next_quarter_start + relativedelta(months=3, days=-1)
+
+        return last_day_of_next_quarter
+
+    @classmethod
+    def get_last_day_of_next_year(cls, input_date):
+        """
+        Calculates the last day of the next calendar year from a given date.
+
+        Args:
+            input_date (date): The starting date.
+
+        Returns:
+            date: The last day of the next year.
+        """
+        next_year = input_date.year + 1
+        return date(next_year, 12, 31)
