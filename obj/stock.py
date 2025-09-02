@@ -564,8 +564,8 @@ class stock(engine):
             temp = []
             # print("here", get_last_day_of_next_quarter(each))
             try:
-                self.initialize(defaultRateApproach = True, valuationMethod = "earning", defaultLTGrowth = False, \
-                                valuationStage = "three", growthCalcMethod = "earning", growthCalcHorizon = 1, valuationHorizon = 5, date=current)
+                self.initialize(defaultRateApproach, valuationMethod, defaultLTGrowth, \
+                                valuationStage, growthCalcMethod, growthCalcHorizon, valuationHorizon, current)
                 fairvalue = self.FV
                 temp.append(fairvalue)
                 if self._period == 'quarter':

@@ -353,7 +353,7 @@ class engine(object):
             year_periods = pd.period_range(start=start_date, end=end_date, freq='A-DEC')
             year_ends = [period.end_time.date() for period in year_periods]
             return year_ends
-        elif period != "quarter":
+        elif period == "quarter":
             quarter_periods = pd.period_range(start=start_date, end=end_date, freq='Q-DEC')
 
             # Convert each Period object to its end date (Timestamp)
