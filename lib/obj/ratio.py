@@ -1,5 +1,5 @@
-from util.utility import UtilityMixin
-from util.globalvariable import ratioMapping
+from lib.util.utility import UtilityMixin
+from lib.util.globalvariable import ratioMapping
 
 class ratio(UtilityMixin):
     global ratioMapping

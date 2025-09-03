@@ -1,5 +1,5 @@
-from util.utility import UtilityMixin
-from util.globalvariable import mapping
+from lib.util.utility import UtilityMixin
+from lib.util.globalvariable import mapping
 import akshare as ak
 import pandas as pd
 import numpy as np

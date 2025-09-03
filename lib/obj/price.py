@@ -1,4 +1,4 @@
-from util.utility import UtilityMixin
+from lib.util.utility import UtilityMixin
 import pandas as pd
 import numpy as np
 import akshare as ak

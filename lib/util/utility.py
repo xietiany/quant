@@ -1,12 +1,12 @@
 import requests
 import pandas as pd
 from datetime import datetime
-from util.config import config
+from lib.util.config import config
 
 class UtilityMixin(object):
     ### to-do: need to change the hard code part
-    config = config('demo.config')
-    apikey = config.api
+    # config = config('demo.config') # path needs to be changed when used in different project
+    # apikey = config.api
     base_url = "https://financialmodelingprep.com/api/v3"
     v4_url = "https://financialmodelingprep.com/api/v4"
     advancedvaluation_url = "advanced_discounted_cash_flow"

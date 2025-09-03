@@ -1,5 +1,5 @@
-from util.utility import UtilityMixin
-from util.globalvariable import dividendMapping
+from lib.util.utility import UtilityMixin
+from lib.util.globalvariable import dividendMapping
 from datetime import datetime
 import akshare as ak
 
