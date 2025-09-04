@@ -580,9 +580,8 @@ class stock(engine):
                 print(ValueError)
 
         self._backtestingDF = pd.DataFrame(data=self._res, index=self._xaxis, columns=["fair value", "top 10 mean", "mean"])
+
         plt.plot(self._xaxis, self._res, label = ["fair value", "top 10 mean", "mean"],marker='o', linestyle='-') # For a line plot with markers
-        # Or for a scatter plot:
-        # plt.scatter(x_values, y_values)
         
         plt.xticks(rotation=90)
         plt.xlabel("X-axis")
@@ -590,6 +589,7 @@ class stock(engine):
         plt.title("Plot of Backtesting")
         plt.legend()
         plt.grid(True)
+        
         plt.show()
 
     def initialize(self, defaultRateApproach = True, valuationMethod = "fcfe", defaultLTGrowth = False, \
@@ -659,3 +659,11 @@ class stock(engine):
     @property
     def getBacktestingDF(self):
         return self._backtestingDF
+
+    @property
+    def getBacktestResult(self):
+        return self._res 
+    
+    @property
+    def getBacktestXaxis(self):
+        return self._xaxis
