@@ -170,7 +170,7 @@ class stock(engine):
     def MVEquity(self, input_date=None):
         if not input_date:
             input_date = self.get_default_last_day_of_previous_year()
-        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice)[input_date]
+        self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).iloc[0] # to-do, use the latest market price
         return self._MVEquity
     
     def MVDebt(self, input_date=None):
@@ -178,7 +178,7 @@ class stock(engine):
             input_date = self.get_default_last_day_of_previous_year()
         self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
         self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
-        self._balancest.capitalLease.fillna(0))[input_date]
+        self._balancest.capitalLease.fillna(0)).iloc[0] # to-do, use the latest balance sheet
         return self._MVDebt
 
     def EV(self):
@@ -206,7 +206,7 @@ class stock(engine):
     def costDebt(self, input_date=None):
         if not input_date:
             input_date = self.get_default_last_day_of_previous_year()
-        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100)[input_date]
+        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).iloc[0] # to-do, use the latest income statement
 
     def PS(self):
         pass
@@ -285,7 +285,7 @@ class stock(engine):
             raise ValueError("rate should be greater than 0")
         self._RR = rate
     
-    def _betaCalc(self, start = "2024-01-01", end = "2024-12-31"):
+    def _betaCalc(self, start = "2025-01-01", end = "2025-12-31"):
         if isinstance(start, str):
             format_string = "%Y-%m-%d"
             start = pd.to_datetime(start, format=format_string).date()
@@ -316,7 +316,7 @@ class stock(engine):
 
         self._beta = covariance / market_variance
 
-    def _marketReturnCalc(self, start = "2024-01-01", end = "2024-12-31"):
+    def _marketReturnCalc(self, start = "2025-01-01", end = "2025-12-31"):
         if isinstance(start, str):
             format_string = "%Y-%m-%d"
             start = pd.to_datetime(start, format=format_string).date()

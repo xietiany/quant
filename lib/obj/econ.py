@@ -29,7 +29,7 @@ class econ(UtilityMixin):
         return self._index
 
     def _indexCalc(self, index="sh000001"):
-        self._index = ak.stock_zh_index_daily_em(symbol=index)
+        self._index = ak.stock_zh_a_daily(symbol='sh000001')
 
     def _marketReturnCalc(self, index="sh000001", period=12):
         '''

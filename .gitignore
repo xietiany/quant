@@ -4,3 +4,7 @@ __pycache__/
 *.csv
 *.txt
 *.ipynb
+*.txt
+*.ipynb
+/*.DS_Store
+*.DS_Store
