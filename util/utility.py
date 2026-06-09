@@ -8,8 +8,9 @@ class UtilityMixin(object):
     apikey = config.api
     base_url = "https://financialmodelingprep.com/api/v3"
     v4_url = "https://financialmodelingprep.com/api/v4"
-    advancedvaluation_url = "advanced_discounted_cash_flow"
+    price_url = "https://financialmodelingprep.com/stable/historical-price-eod/full"
     leveredvaluation_url = "advanced_levered_discounted_cash_flow"
+    advancedvaluation_url = "advanced_discounted_cash_flow"
     dividend_url = "https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend"
 
     
@@ -22,6 +23,10 @@ class UtilityMixin(object):
     @classmethod
     def combine_url(cls, ticker, period, datatype):
         return f'{UtilityMixin.base_url}/{datatype}/{ticker}?period={period}&apikey={UtilityMixin.apikey}'
+    
+    @classmethod
+    def pric_url(cls, ticker):
+        return f'{UtilityMixin.price_url}?symbol={ticker.upper()}&apikey={UtilityMixin.apikey}'
 
     @classmethod
     def valuation_url(cls, ticker, Levered=False):

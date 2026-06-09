@@ -246,6 +246,19 @@ dividendMapping = {
     "declarationDate": "declarationDate"
 }
 
+priceMapping = {
+    "symbol": "symbol",
+    "date": "date",
+    "open": "open",
+    "high": "high",
+    "low": "low",
+    "close": "close",
+    "volume": "volumn",
+    "change": "change",
+    "changePercent": "changePercent",
+    "vwap": "vwap"
+}
+
 ratioTTMMapping = {
     ### Key Metric TTM ###
     
