@@ -2,13 +2,26 @@ from lib.util.utility import UtilityMixin
 from lib.util.globalvariable import dividendMapping
 from datetime import datetime
 import akshare as ak
+import pandas as pd
 
 class dividend(UtilityMixin):
     global dividendMapping
     def __init__(self, ticker):
         # self._url = self.div_url(ticker)
         ticker = ticker[2:] # only keep the last six digits
-        self._raw = ak.stock_dividend_cninfo(symbol=ticker)
+        try:
+            self._raw = ak.stock_dividend_cninfo(symbol=ticker)
+        except Exception:
+            self._raw = pd.DataFrame()
+
+        if self._raw.empty:
+            self._data = {}
+            self._date = []
+            self._div = pd.Series(dtype=float)
+            self._shareAdd = pd.Series(dtype=float)
+            self._shareConvert = pd.Series(dtype=float)
+            return
+
         self._data = self._divTransfer(self._raw)
 
         self._mapping = dividendMapping
@@ -22,13 +35,11 @@ class dividend(UtilityMixin):
         self._shareConvert = self.loadts(self._data, self._mapping["shareConvert"], self._date)
         # self._recordDate = self.loadts(self._raw, self._mapping["recordDate"], self._date)
         # self._paymentDate = self.loadts(self._raw, self._mapping["paymentDate"], self._date)
-        # self._declarationDate = self.loadts(self._raw, self._mapping["declarationDate"], self._date)
-
     def _func(self, x):
-        if x["报告时间"]:
-            return datetime(int(x["报告时间"][0:4]), 12, 31)
-        else: # if 报告时间 is None
-            return datetime(int(x["实施方案公告日期"].year), 12, 31) 
+        if x[dividendMapping["reportDate"]]:
+            return datetime(int(x[dividendMapping["reportDate"]][0:4]), 12, 31)
+        else:
+            return datetime(int(x[dividendMapping["declarationDate"]].year), 12, 31)
 
     def _divTransfer(self, df):
         '''

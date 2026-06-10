@@ -456,7 +456,7 @@ class stock(engine):
         return self._valuationMethod
     
     @valuationMethod.setter
-    def valuationMehod(self, option="fcfe"):
+    def valuationMethod(self, option="fcfe"):
         '''
         Option could be "fcfe, earning, ri"
         '''
@@ -626,7 +626,7 @@ class stock(engine):
         self.costDebt(self._formalDate)
         
         self.RR = defaultRateApproach
-        self.valuationMehod = valuationMethod
+        self.valuationMethod = valuationMethod
         self._longtermGrowthDefault = defaultLTGrowth
         self._valuationStage = valuationStage
         self._growthCalcMethod = growthCalcMethod

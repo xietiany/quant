@@ -282,7 +282,7 @@ dividendMapping = {
     "shareConvert": "转增比例",
     "div": "派息比例",
     # "payoutRatio": "股利支付率",
-    "declarationDate": "declarationDate"
+    "declarationDate": "实施方案公告日期"
 }
 
 ratioTTMMapping = {
