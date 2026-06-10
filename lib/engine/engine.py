@@ -350,7 +350,7 @@ class engine(object):
         if period == "annual":
             start_date = cls.dateconverter(start_date, period="annual")
             end_date = cls.dateconverter(end_date, period="annual")
-            year_periods = pd.period_range(start=start_date, end=end_date, freq='A-DEC')
+            year_periods = pd.period_range(start=start_date, end=end_date, freq='Y-DEC')
             year_ends = [period.end_time.date() for period in year_periods]
             return year_ends
         elif period == "quarter":
