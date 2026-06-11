@@ -521,7 +521,7 @@ class stock(engine):
 
 
     @property
-    def FV(self, date=None):
+    def FV(self):
         """
         Notice the parameter in the earning function is the callback attribute
         Therefore it will prin the input information
@@ -599,8 +599,8 @@ class stock(engine):
                     temp.append(self.price.Mean(self._period).to_dict()[year])
                 self._xaxis.append(current)
                 self._res.append(temp)
-            except ValueError:
-                print(ValueError)
+            except (ValueError, ZeroDivisionError, KeyError, IndexError) as e:
+                print(f"----------------------Warning: Skipping {current}------------------------: {e}")
 
         self._backtestingDF = pd.DataFrame(data=self._res, index=self._xaxis, columns=["fair value", "top 10 mean", "mean"])
 

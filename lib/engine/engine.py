@@ -36,10 +36,9 @@ class engine(object):
 
     @classmethod
     def FCFE(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def FCFETwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
@@ -56,10 +55,9 @@ class engine(object):
 
     @classmethod
     def earning(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def earningTwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
@@ -76,10 +74,9 @@ class engine(object):
     
     @classmethod
     def singleStage(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def TwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):

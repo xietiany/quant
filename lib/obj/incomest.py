@@ -62,7 +62,10 @@ class incomest(UtilityMixin):
         self._init() # calculate some non-fetch variable
 
     def _init(self):
-        self._shares = self._parentNetInc / self._eps
+        zero_eps = self._eps[self._eps == 0].index.tolist()
+        if zero_eps:
+            print(f"Warning: EPS is 0 for {zero_eps}, share count set to NaN for those periods")
+        self._shares = self._parentNetInc / self._eps.replace(0, float('nan'))
 
     @property
     def raw(self):
