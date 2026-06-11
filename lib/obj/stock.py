@@ -213,7 +213,10 @@ class stock(engine):
     def costDebt(self, input_date=None):
         if not input_date:
             input_date = self.get_default_last_day_of_previous_year()
-        self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).iloc[0] # to-do, use the latest income statement
+        if self._MVDebt == 0:
+            self._costDebt = 0.0
+        else:
+            self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).iloc[0] # to-do, use the latest income statement
 
     def PS(self):
         pass
@@ -379,7 +382,7 @@ class stock(engine):
 
     def secondstateGrowthEngine(self):
         ### use if else condition to get the secondstategrowth
-        if not self._firstStageGrowth:
+        if self._firstStageGrowth is None:
             raise ValueError("Not initialzie the first stage growth rate")
         if self._firstStageGrowth <= 5:
             self._secondStageGrowth = self._firstStageGrowth
@@ -402,7 +405,7 @@ class stock(engine):
 
     def LTGrowthEngine(self):
         # to-do: We should have a table config for this parameter
-        if not self._secondStageGrowth:
+        if self._secondStageGrowth is None:
             raise ValueError("Not initialize the second stage growth rate")
         if self._secondStageGrowth <= 5:
             self._LTGrowth = self._secondStageGrowth
