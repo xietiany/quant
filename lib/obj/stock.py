@@ -8,6 +8,7 @@ from lib.obj.econ import econ
 from lib.obj.price import price
 from lib.engine.engine import engine
 from lib.util.config import config as Config
+from datetime import date
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -295,13 +296,17 @@ class stock(engine):
             raise ValueError("rate should be greater than 0")
         self._RR = rate
     
-    def _betaCalc(self, start = "2025-01-01", end = "2025-12-31"):
+    def _betaCalc(self, start=None, end=None):
+        if start is None:
+            prev_year = date.today().year - 1
+            start = date(prev_year, 1, 1)
+        if end is None:
+            prev_year = date.today().year - 1
+            end = date(prev_year, 12, 31)
         if isinstance(start, str):
-            format_string = "%Y-%m-%d"
-            start = pd.to_datetime(start, format=format_string).date()
+            start = pd.to_datetime(start, format="%Y-%m-%d").date()
         if isinstance(end, str):
-            format_string = "%Y-%m-%d"
-            end = pd.to_datetime(end, format=format_string).date()
+            end = pd.to_datetime(end, format="%Y-%m-%d").date()
         
         stockHist = self._price.raw
         self._marketIndex["date"] = pd.to_datetime(self._marketIndex.date)
@@ -341,10 +346,15 @@ class stock(engine):
         self._marketReturn = self._macro.setMarketReturnMethod(method, **kwargs)
         self.costEquity()
 
-    def _updateCurrentMarketPrice(self, start = "2024-01-01", end = "2024-12-31"):
+    def _updateCurrentMarketPrice(self, start=None, end=None):
+        if start is None:
+            prev_year = date.today().year - 1
+            start = date(prev_year, 1, 1)
+        if end is None:
+            prev_year = date.today().year - 1
+            end = date(prev_year, 12, 31)
         if isinstance(start, str):
-            format_string = "%Y-%m-%d"
-            start = pd.to_datetime(start, format=format_string).date()
+            start = pd.to_datetime(start, format="%Y-%m-%d").date()
         if isinstance(end, str):
             format_string = "%Y-%m-%d"
             end = pd.to_datetime(end, format=format_string).date()

@@ -28,7 +28,7 @@ class engine(object):
         ending = starting
         growthcent = cls.RateConversion(growth)
         RRcent = cls.RateConversion(RR)
-        for i in range(period):
+        for _ in range(period):
             ending = ending * growthcent / RRcent
             cashflowlist.append(ending)
 
@@ -328,7 +328,7 @@ class engine(object):
         if isinstance(input_date, str):
             format_string = "%Y-%m-%d"
             input_date = datetime.strptime(input_date, format_string).date()
-        end_date = input_date
+        end_date = min(input_date, date.today())
         start_date = date(end_date.year - years, end_date.month, end_date.day)
 
         return start_date, end_date
