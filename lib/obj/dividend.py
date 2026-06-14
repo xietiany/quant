@@ -35,11 +35,13 @@ class dividend(UtilityMixin):
         self._shareConvert = self.loadts(self._data, self._mapping["shareConvert"], self._date)
         # self._recordDate = self.loadts(self._raw, self._mapping["recordDate"], self._date)
         # self._paymentDate = self.loadts(self._raw, self._mapping["paymentDate"], self._date)
+    
     def _func(self, x):
-        if x[dividendMapping["reportDate"]]:
-            return datetime(int(x[dividendMapping["reportDate"]][0:4]), 12, 31)
-        else:
-            return datetime(int(x[dividendMapping["declarationDate"]].year), 12, 31)
+        return datetime(int(x[dividendMapping["declarationDate"]].year), 12, 31)
+        # if x[dividendMapping["reportDate"]]:
+        #     return datetime(int(x[dividendMapping["reportDate"]][0:4]), 12, 31)
+        # else:
+        #     return datetime(int(x[dividendMapping["declarationDate"]].year), 12, 31)
 
     def _divTransfer(self, df):
         '''
