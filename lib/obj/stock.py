@@ -173,12 +173,15 @@ class stock(engine):
         self._MVEquity = (self._incomest.shares * self._price.latestQuarterMarketPrice).iloc[0] # to-do, use the latest market price
         return self._MVEquity
     
+    def _debtSeries(self):
+        return self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
+            self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
+            self._balancest.capitalLease.fillna(0)
+
     def MVDebt(self, input_date=None):
         if not input_date:
             input_date = self.get_default_last_day_of_previous_year()
-        self._MVDebt = (self._balancest.stDebt.fillna(0) + self._balancest.notePayable.fillna(0) + \
-        self._balancest.ltDebt.fillna(0) + self._balancest.bondPayable.fillna(0) + \
-        self._balancest.capitalLease.fillna(0)).iloc[0] # to-do, use the latest balance sheet
+        self._MVDebt = self._debtSeries().iloc[0] # to-do, use the latest balance sheet
         return self._MVDebt
 
     def EV(self):
@@ -209,19 +212,44 @@ class stock(engine):
         self._costDebt = (self._incomest.intExp.fillna(0) / self._MVDebt * 100).iloc[0] # to-do, use the latest income statement
 
     def PS(self):
-        pass
-    
+        self._PS = self._MVEquity / self._incomest.revenue.iloc[0]
+        return self._PS
+
     def PE(self):
-        pass
+        self._PE = self._MVEquity / self._incomest.parentNetInc.iloc[0]
+        return self._PE
 
     def PB(self):
-        pass
-    
+        self._PB = self._MVEquity / self._balancest.totalEquity.iloc[0]
+        return self._PB
+
+    def EBITDA(self):
+        self._EBITDA = self._incomest.operaProfit.fillna(0) + self._incomest.financeExp.fillna(0) + self._cashflowst.DA.fillna(0)
+        return self._EBITDA
+
     def EVtoEBITDA(self):
-        pass
+        self._EVtoEBITDA = self._EV / self.EBITDA().iloc[0]
+        return self._EVtoEBITDA
 
     def PEG(self):
-        pass
+        if not self._firstStageGrowth:
+            raise ValueError("first stage growth must be initialized before computing PEG")
+        self._PEG = self.PE() / self._firstStageGrowth
+        return self._PEG
+
+    def ROE(self):
+        self._ROE = (self._incomest.parentNetInc.fillna(0) / self._balancest.totalEquity.fillna(0)) * 100
+        return self._ROE
+
+    def ROIC(self):
+        nopat = self._incomest.operaProfit.fillna(0) * (1 - self._taxRate / 100)
+        investedCapital = self._balancest.totalEquity.fillna(0) + self._debtSeries() - self._balancest.cashEqui.fillna(0)
+        self._ROIC = (nopat / investedCapital) * 100
+        return self._ROIC
+
+    def debtToEBITDA(self):
+        self._debtToEBITDA = self._debtSeries() / self.EBITDA()
+        return self._debtToEBITDA
 
     def PPE(self):
         self._PPE = self._balancest.fixedAsset.fillna(0) + self._balancest.fixedAssetUnderConstruct.fillna(0) + self._balancest.useRightAsset.fillna(0)

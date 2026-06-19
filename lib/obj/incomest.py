@@ -35,7 +35,8 @@ class incomest(UtilityMixin):
         
         self._intInc = self.loadts(self._raw, mapping['interstIncome'], self._date)
         self._intExp = self.loadts(self._raw, mapping['interstExpense'], self._date)
-        
+        self._operaProfit = self.loadts(self._raw, mapping['operatingIncome'], self._date)
+
         # self._DA = self.loadts(self._raw, mapping['D&A'], self._date)
         # self._assetImpairment = self.loadts(self._raw, mapping['assetImpairment'], self._date)
         # self._assetDispose = self.loadts(self._raw, mapping['asseetDispose'], self._date)
@@ -159,6 +160,10 @@ class incomest(UtilityMixin):
     @property
     def intExp(self):
         return self._intExp
+
+    @property
+    def operaProfit(self):
+        return self._operaProfit
 
     # @property
     # def ebitdaRatio(self):

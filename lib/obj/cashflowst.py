@@ -47,6 +47,12 @@ class cashflowst(UtilityMixin):
         self._operaCF = self.loadts(self._raw, mapping['operaCF'], self._date)
         self._capitalExp = self.loadts(self._raw, mapping['capitalExp'], self._date)
         # self._freeCF = self.loadts(self._raw, mapping['freeCF'], self._date)
+        self._depreciation = self.loadts(self._raw, mapping['depreciation'], self._date)
+        self._oilgasDepr = self.loadts(self._raw, mapping['oilgasDepr'], self._date)
+        self._investRealEstateDepr = self.loadts(self._raw, mapping['investRealEstateDepr'], self._date)
+        self._intangibleAmortize = self.loadts(self._raw, mapping['intangibleAmortize'], self._date)
+        self._longPrepaidAmortize = self.loadts(self._raw, mapping['longPrepaidAmortize'], self._date)
+        self._useRightAmortize = self.loadts(self._raw, mapping['useRightAmortize'], self._date)
         self._init() # calculate some non-fetch variable
 
     def _init(self):
@@ -54,6 +60,8 @@ class cashflowst(UtilityMixin):
         Calculate free cash flow
         '''
         self._freeCF = self._operaCF - self._capitalExp
+        self._DA = self._depreciation.fillna(0) + self._oilgasDepr.fillna(0) + self._investRealEstateDepr.fillna(0) + \
+            self._intangibleAmortize.fillna(0) + self._longPrepaidAmortize.fillna(0) + self._useRightAmortize.fillna(0)
         
     @property
     def raw(self):
@@ -186,3 +194,7 @@ class cashflowst(UtilityMixin):
     @property
     def freeCF(self):
         return self._freeCF
+
+    @property
+    def DA(self):
+        return self._DA

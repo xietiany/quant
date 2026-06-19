@@ -62,6 +62,7 @@ class balancest(UtilityMixin):
         # self._totalNonCurLiability = self.loadts(self._raw, mapping['totalNonCurLiability'], self._date)
         # self._otherLiability = self.loadts(self._raw, mapping['otherLiability'], self._date)
         self._capitalLease = self.loadts(self._raw, mapping['capitalLease'], self._date)
+        self._totalEquity = self.loadts(self._raw, mapping['totalEquity'], self._date)
         # self._totalLiability = self.loadts(self._raw, mapping['totalLiability'], self._date) 
         # self._preStock = self.loadts(self._raw, mapping['preStock'], self._date)
         # self._comStock = self.loadts(self._raw, mapping['comStock'], self._date)
@@ -264,6 +265,10 @@ class balancest(UtilityMixin):
     @property
     def capitalLease(self):
         return self._capitalLease
+
+    @property
+    def totalEquity(self):
+        return self._totalEquity
 
     # @property
     # def totalLiability(self):

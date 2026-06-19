@@ -26,7 +26,7 @@ mapping = {
     # 'D&A': 'depreciationAndAmortization',
     # 'ebitda': 'ebitda',
     # 'ebitdaRatio': 'ebitdaratio',
-    # 'operatingIncome': 'operatingIncome',
+    'operatingIncome': 'OPERATE_PROFIT',
     # 'operatingIncomeRatio': 'operatingIncomeRatio',
     # 'totalOtherIncomeExpensesNet': 'totalOtherIncomeExpensesNet',
     # 'incomeBeforeTax': 'incomeBeforeTax',
@@ -73,6 +73,12 @@ mapping = {
     'operaCF': 'NETCASH_OPERATENOTE',
     'capitalExp': 'CONSTRUCT_LONG_ASSET',
     # 'freeCF': 'freeCashFlow',
+    'depreciation': 'FA_IR_DEPR',
+    'oilgasDepr': 'OILGAS_BIOLOGY_DEPR',
+    'investRealEstateDepr': 'IR_DEPR',
+    'intangibleAmortize': 'IA_AMORTIZE',
+    'longPrepaidAmortize': 'LPE_AMORTIZE',
+    'useRightAmortize': 'USERIGHT_ASSET_AMORTIZE',
     ### ------------------------------- ###
     ### cashflow statement variable ###
     ### ------------------------------- ###
@@ -130,7 +136,7 @@ mapping = {
     # 'otherComprehensivePL': 'accumulatedOtherComprehensiveIncomeLoss',
     # 'otherTotalEquity': 'othertotalStockholdersEquity',
     # 'totalStockEquity': 'totalStockholdersEquity',
-    # 'totalEquity': 'totalEquity',
+    'totalEquity': 'TOTAL_PARENT_EQUITY',
     # 'totalL&StockE': 'totalLiabilitiesAndStockholdersEquity',
     # 'minorInt': 'minorityInterest',
     # 'totalL&E': 'totalLiabilitiesAndTotalEquity',
