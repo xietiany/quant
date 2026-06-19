@@ -28,7 +28,7 @@ class engine(object):
         ending = starting
         growthcent = cls.RateConversion(growth)
         RRcent = cls.RateConversion(RR)
-        for i in range(period):
+        for _ in range(period):
             ending = ending * growthcent / RRcent
             cashflowlist.append(ending)
 
@@ -36,10 +36,9 @@ class engine(object):
 
     @classmethod
     def FCFE(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def FCFETwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
@@ -56,10 +55,9 @@ class engine(object):
 
     @classmethod
     def earning(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def earningTwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
@@ -76,10 +74,9 @@ class engine(object):
     
     @classmethod
     def singleStage(cls, starting, LTGrowth, RR):
-        divider = ((RR - LTGrowth) / 100)
         if RR - LTGrowth <= 0:
-            print("RR needs to be greater than LTGrowth")
-        return starting * (1 + LTGrowth / 100) / divider
+            raise ValueError(f"RR ({RR}) must be greater than LTGrowth ({LTGrowth})")
+        return starting * (1 + LTGrowth / 100) / ((RR - LTGrowth) / 100)
 
     @classmethod
     def TwoStage(cls, starting, firststageGrowth, firststagePeriod, LTGrowth, RR):
@@ -328,7 +325,7 @@ class engine(object):
         if isinstance(input_date, str):
             format_string = "%Y-%m-%d"
             input_date = datetime.strptime(input_date, format_string).date()
-        end_date = input_date
+        end_date = min(input_date, date.today())
         start_date = date(end_date.year - years, end_date.month, end_date.day)
 
         return start_date, end_date
@@ -350,7 +347,7 @@ class engine(object):
         if period == "annual":
             start_date = cls.dateconverter(start_date, period="annual")
             end_date = cls.dateconverter(end_date, period="annual")
-            year_periods = pd.period_range(start=start_date, end=end_date, freq='A-DEC')
+            year_periods = pd.period_range(start=start_date, end=end_date, freq='Y-DEC')
             year_ends = [period.end_time.date() for period in year_periods]
             return year_ends
         elif period == "quarter":
